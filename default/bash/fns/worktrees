@@ -1,5 +1,5 @@
 # Create a new worktree and branch from within current git directory.
-ga() {
+function ga {
   if [[ -z "$1" ]]; then
     echo "Usage: ga [branch name]"
     return 1
@@ -15,7 +15,7 @@ ga() {
 }
 
 # Remove worktree and branch from within active worktree directory.
-gd() {
+function gd {
   if gum confirm "Remove worktree and branch?"; then
     local cwd base branch root worktree
 
