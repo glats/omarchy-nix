@@ -91,7 +91,6 @@ in {
     obs-studio
   ]
   ++ lib.optionals (pkgs ? kdenlive) [ kdenlive ]
-  ++ lib.optionals (pkgs ? libsForQt5.kdenlive) [ libsForQt5.kdenlive ]
   ++ [
   ]
   ++ lib.optionals cfg.office_suite.enable [
@@ -136,8 +135,6 @@ in {
 
     # Qt Wayland and theming
     kdePackages.qtwayland
-    libsForQt5.qt5.qtwayland
-    libsForQt5.qtstyleplugin-kvantum
     kdePackages.qtstyleplugin-kvantum
   ];
 
