@@ -224,23 +224,23 @@
   glats = {
     slug = "glats";
     name = "Glats";
-    author = "glats";
+    author = "Custom";
     palette = {
       base00 = "000000"; # Default Background
-      base01 = "0a0a0a"; # Lighter Background
+      base01 = "1a1a1a"; # Lighter Background
       base02 = "505050"; # Selection Background
       base03 = "767676"; # Comments, Invisibles
       base04 = "a0a0a0"; # Dark Foreground
       base05 = "e0e0e0"; # Default Foreground
       base06 = "f0f0f0"; # Light Foreground
       base07 = "ffffff"; # Light Background
-      base08 = "cc0403"; # Variables (red)
+      base08 = "f2201f"; # Variables (red)
       base09 = "ff8800"; # Integers (orange)
-      base0A = "cecb00"; # Classes (yellow)
-      base0B = "19cb00"; # Strings (green)
-      base0C = "0dcdcd"; # Regex (cyan)
-      base0D = "0d73cc"; # Functions (blue)
-      base0E = "cb1ed1"; # Keywords (magenta)
+      base0A = "fffd00"; # Classes (yellow)
+      base0B = "23fd00"; # Strings (green)
+      base0C = "14ffff"; # Regex (cyan)
+      base0D = "1a8fff"; # Functions (blue)
+      base0E = "fd28ff"; # Keywords (magenta)
       base0F = "ff6600"; # Deprecated
     };
   };
