@@ -57,6 +57,7 @@
   "flexoki-light" = {
     base16-theme = "flexoki-light";
     vscode-theme = "flexoki-light";
+    custom-scheme = true;
   };
 
   "matte-black" = {

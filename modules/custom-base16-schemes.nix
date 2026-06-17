@@ -244,4 +244,32 @@
       base0F = "ff6600"; # Deprecated
     };
   };
+
+  # Flexoki Light (Steph Ango) — light theme, no upstream base16 yaml
+  # https://github.com/kepano/flexoki — values taken from the official
+  # Flexoki palette plus the existing omarchy flexoki-light port
+  # (https://github.com/euandeas/omarchy-flexoki-light-theme).
+  flexoki-light = {
+    slug = "flexoki-light";
+    name = "Flexoki Light";
+    author = "Steph Ango (kepano/flexoki), port by omarchy-nix";
+    palette = {
+      base00 = "FFFCF0"; # Default Background (paper)
+      base01 = "F2F0E5"; # Lighter Background (base-50)
+      base02 = "CECDC3"; # Selection Background (base-200)
+      base03 = "878580"; # Comments, Invisibles (base-500)
+      base04 = "6F6E69"; # Dark Foreground (base-600)
+      base05 = "100F0F"; # Default Foreground (black)
+      base06 = "403E3C"; # Light Foreground (base-800)
+      base07 = "1C1B1A"; # Light Background (base-950)
+      base08 = "D14D41"; # Variables (red-400)
+      base09 = "DA702C"; # Integers (orange-400)
+      base0A = "D0A215"; # Classes (yellow-400)
+      base0B = "879A39"; # Strings (green-400)
+      base0C = "3AA99F"; # Regex (cyan-400)
+      base0D = "205EA6"; # Functions (blue-600, accent)
+      base0E = "8B7EC8"; # Keywords (purple-400)
+      base0F = "CE5D97"; # Deprecated (magenta-400)
+    };
+  };
 }
