@@ -347,16 +347,20 @@ let
     source = sourceDir + "/${name}";
   });
 
-  # Prefix each entry with `.config/omarchy/themes/<theme>/`.
+  # Build the final `home.file` entries for a theme: an attrset of
+  # `.config/omarchy/themes/<theme>/<filename>` → `{ text = ... }` or
+  # `{ source = ...; recursive = true; }`. We map to a list of pairs
+  # (with the keys prefixed) and `listToAttrs` back into an attrset so
+  # the result merges cleanly with `//` below.
   mkThemeFileEntries = themeName: let
     entries =
       (mkGeneratedFiles themeName)
       // (mkBackgrounds themeName)
       // (mkExtras themeName);
-  in lib.mapAttrs' (name: value: {
+  in lib.listToAttrs (lib.mapAttrsToList (name: value: {
     name = ".config/omarchy/themes/${themeName}/${name}";
     inherit value;
-  }) entries;
+  }) entries);
 
   allThemeFiles = lib.foldl' (acc: themeName:
     acc // (mkThemeFileEntries themeName)
