@@ -137,6 +137,19 @@ in {
   environment.sessionVariables = {
     ELEPHANT_PROVIDER_DIR = "${elephantCombined}/lib/elephant/providers";
     OMARCHY_PATH = "$HOME/.local/share/omarchy";
+    # Set PATH as a list (not a string) so consumers can extend it with
+    # mkBefore/mkAfter without string-concatenation pitfalls. Order:
+    # omarchy user scripts → nix user profiles → per-user profile → system
+    # profile → current-system sw (last wins on duplicates).
+    PATH = [
+      "/home/${cfg.username}/.local/share/omarchy/bin"
+      "/home/${cfg.username}/.nix-profile/bin"
+      "/nix/profile/bin"
+      "/home/${cfg.username}/.local/state/nix/profile/bin"
+      "/etc/profiles/per-user/${cfg.username}/bin"
+      "/nix/var/nix/profiles/default/bin"
+      "/run/current-system/sw/bin"
+    ];
   };
 
   # Raise soft fd limit (omarchy install/config/increase-fd-limit.sh equivalent)
