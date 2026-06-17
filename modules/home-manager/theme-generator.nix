@@ -20,7 +20,8 @@
 #     that aren't in the generated set.
 #
 # A symlink at `~/.config/omarchy/current/theme` points to the active theme.
-inputs: {
+inputs:
+{
   config,
   pkgs,
   lib,
@@ -39,21 +40,22 @@ let
     "gruvbox-light" = "gruvbox";
   };
 
-  getThemeSource = themeName:
-    if builtins.hasAttr themeName themeSourceMap
-    then themeSourceMap.${themeName}
-    else themeName;
+  getThemeSource =
+    themeName:
+    if builtins.hasAttr themeName themeSourceMap then themeSourceMap.${themeName} else themeName;
 
   # Resolve the base16 palette for a theme name. Returns a flat attrset
   # with base00..base0F keys (hex strings, no leading `#`).
-  paletteFor = themeName:
+  paletteFor =
+    themeName:
     let
       t = themes.${themeName};
       useCustom = t ? custom-scheme && t.custom-scheme;
     in
-      if useCustom
-      then customSchemes.${t.base16-theme}
-      else inputs.nix-colors.colorSchemes.${t.base16-theme}.palette;
+    if useCustom then
+      customSchemes.${t.base16-theme}
+    else
+      inputs.nix-colors.colorSchemes.${t.base16-theme}.palette;
 
   # Files generated from the palette for every theme.
   generatedFileNames = [
@@ -82,6 +84,11 @@ let
     "preview.png"
     "preview-unlock.png"
     "unlock.png"
+    # `light.mode` is a marker file consumed by `bin/omarchy-theme-picker` and
+    # `bin/omarchy-theme-set-gnome` to detect light themes at runtime. Only
+    # present in light variants (catppuccin-latte, flexoki-light, rose-pine),
+    # but listing it here means it gets copied through whenever it exists.
+    "light.mode"
   ];
 
   # Per-file content generators. Each takes the palette `p` and produces
@@ -180,6 +187,26 @@ let
     [colors.selection]
     text = "CellForeground"
     background = "#${p.base02}"
+
+    [colors.normal]
+    black = "#${p.base00}"
+    red = "#${p.base08}"
+    green = "#${p.base0B}"
+    yellow = "#${p.base0A}"
+    blue = "#${p.base0D}"
+    magenta = "#${p.base0E}"
+    cyan = "#${p.base0C}"
+    white = "#${p.base05}"
+
+    [colors.bright]
+    black = "#${p.base03}"
+    red = "#${p.base09}"
+    green = "#${p.base0B}"
+    yellow = "#${p.base0A}"
+    blue = "#${p.base0D}"
+    magenta = "#${p.base0E}"
+    cyan = "#${p.base0C}"
+    white = "#${p.base07}"
   '';
 
   mkBtop = p: ''
@@ -297,82 +324,114 @@ let
   mkChromium = _: "0,0,0\n";
   mkIcons = _: "Papirus-Dark\n";
 
-  mkVscode = theme: ''{
-  "workbench.colorTheme": "${theme.vscode-theme}"
-}
-'';
+  mkVscode = theme: ''
+    {
+      "workbench.colorTheme": "${theme.vscode-theme}"
+    }
+  '';
 
   # Dispatch: pick the right generator for a file name.
-  contentFor = file: p: theme: themeName:
-    if file == "alacritty.toml" then mkAlacritty p
-    else if file == "btop.theme" then mkBtop p
-    else if file == "chromium.theme" then mkChromium p
-    else if file == "ghostty.conf" then mkGhostty p
-    else if file == "hyprland.conf" then mkHyprland p
-    else if file == "hyprlock.conf" then mkHyprlock p
-    else if file == "icons.theme" then mkIcons p
-    else if file == "kitty.conf" then mkKitty p
-    else if file == "mako.ini" then mkMako p
-    else if file == "swayosd.css" then mkSwayosd p
-    else if file == "vscode.json" then mkVscode theme
-    else if file == "walker.css" then mkWalker p
-    else if file == "waybar.css" then mkWaybar p
-    else if file == "zellij.kdl" then mkZellij p themeName
-    else throw "theme-generator.nix: unknown generated file ${file}";
+  contentFor =
+    file: p: theme: themeName:
+    if file == "alacritty.toml" then
+      mkAlacritty p
+    else if file == "btop.theme" then
+      mkBtop p
+    else if file == "chromium.theme" then
+      mkChromium p
+    else if file == "ghostty.conf" then
+      mkGhostty p
+    else if file == "hyprland.conf" then
+      mkHyprland p
+    else if file == "hyprlock.conf" then
+      mkHyprlock p
+    else if file == "icons.theme" then
+      mkIcons p
+    else if file == "kitty.conf" then
+      mkKitty p
+    else if file == "mako.ini" then
+      mkMako p
+    else if file == "swayosd.css" then
+      mkSwayosd p
+    else if file == "vscode.json" then
+      mkVscode theme
+    else if file == "walker.css" then
+      mkWalker p
+    else if file == "waybar.css" then
+      mkWaybar p
+    else if file == "zellij.kdl" then
+      mkZellij p themeName
+    else
+      throw "theme-generator.nix: unknown generated file ${file}";
 
   # Build the 14 generated files for a given theme as
   # `{ "<file>" = { text = "..."; }; }`.
-  mkGeneratedFiles = themeName: let
-    p = paletteFor themeName;
-    t = themes.${themeName};
-  in lib.genAttrs generatedFileNames (file: {
-    text = contentFor file p t themeName;
-  });
+  mkGeneratedFiles =
+    themeName:
+    let
+      p = paletteFor themeName;
+      t = themes.${themeName};
+    in
+    lib.genAttrs generatedFileNames (file: {
+      text = contentFor file p t themeName;
+    });
 
   # Backgrounds: copy from `config/themes/<source>/backgrounds/` if it exists.
-  mkBackgrounds = themeName: let
-    sourceName = getThemeSource themeName;
-    sourceDir = ../../config/themes/${sourceName}/backgrounds;
-  in
-    if builtins.pathExists sourceDir
-    then {"backgrounds" = {source = sourceDir; recursive = true;};}
-    else {};
+  mkBackgrounds =
+    themeName:
+    let
+      sourceName = getThemeSource themeName;
+      sourceDir = ../../config/themes/${sourceName}/backgrounds;
+    in
+    if builtins.pathExists sourceDir then
+      {
+        "backgrounds" = {
+          source = sourceDir;
+          recursive = true;
+        };
+      }
+    else
+      { };
 
   # Static extras (previews, neovim.lua, hyprland-preview-share-picker.css):
   # copy each from `config/themes/<source>/` if it exists.
-  mkExtras = themeName: let
-    sourceName = getThemeSource themeName;
-    sourceDir = ../../config/themes/${sourceName};
-    existingFiles = lib.filter (name:
-      builtins.pathExists (sourceDir + "/${name}")
-    ) additionalStaticFiles;
-  in lib.genAttrs existingFiles (name: {
-    source = sourceDir + "/${name}";
-  });
+  mkExtras =
+    themeName:
+    let
+      sourceName = getThemeSource themeName;
+      sourceDir = ../../config/themes/${sourceName};
+      existingFiles = lib.filter (
+        name: builtins.pathExists (sourceDir + "/${name}")
+      ) additionalStaticFiles;
+    in
+    lib.genAttrs existingFiles (name: {
+      source = sourceDir + "/${name}";
+    });
 
   # Build the final `home.file` entries for a theme: an attrset of
   # `.config/omarchy/themes/<theme>/<filename>` → `{ text = ... }` or
   # `{ source = ...; recursive = true; }`. We map to a list of pairs
   # (with the keys prefixed) and `listToAttrs` back into an attrset so
   # the result merges cleanly with `//` below.
-  mkThemeFileEntries = themeName: let
-    entries =
-      (mkGeneratedFiles themeName)
-      // (mkBackgrounds themeName)
-      // (mkExtras themeName);
-  in lib.listToAttrs (lib.mapAttrsToList (name: value: {
-    name = ".config/omarchy/themes/${themeName}/${name}";
-    inherit value;
-  }) entries);
+  mkThemeFileEntries =
+    themeName:
+    let
+      entries = (mkGeneratedFiles themeName) // (mkBackgrounds themeName) // (mkExtras themeName);
+    in
+    lib.listToAttrs (
+      lib.mapAttrsToList (name: value: {
+        name = ".config/omarchy/themes/${themeName}/${name}";
+        inherit value;
+      }) entries
+    );
 
-  allThemeFiles = lib.foldl' (acc: themeName:
-    acc // (mkThemeFileEntries themeName)
-  ) {} themeNames;
-in {
+  allThemeFiles = lib.foldl' (acc: themeName: acc // (mkThemeFileEntries themeName)) { } themeNames;
+in
+{
   home.file = allThemeFiles;
 
   # Create initial symlink to current theme
-  home.activation.omarchy-theme-symlink = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.omarchy-theme-symlink = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     THEME_SYMLINK="$HOME/.config/omarchy/current/theme"
     CURRENT_THEME="${config.omarchy.theme}"
 

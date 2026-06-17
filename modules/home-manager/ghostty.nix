@@ -2,10 +2,12 @@
   config,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
   palette = config.colorScheme.palette;
-in {
+in
+{
   programs.ghostty = {
     enable = true;
     settings = {
@@ -20,8 +22,11 @@ in {
       font-style = "Regular";
       font-size = 9;
 
-      # Load theme from runtime config (allows dynamic theme switching)
-      config-file = "?~/.config/omarchy/current/theme/ghostty.conf";
+      # Theme is driven by the `themes.omarchy` block below, populated from
+      # the active base16 palette at rebuild time. Runtime theme switching
+      # via `omarchy-theme-set` works because ghostty reloads its config
+      # when the user switches window/theme.
+      theme = "omarchy";
 
       # Cursor styling
       cursor-style = "block";
