@@ -10,72 +10,72 @@ in {
     ".config/btop/themes/${cfg.theme}.theme" = {
       text = ''
         # Main text color
-        theme[main_fg]="${palette.base05}"
+        theme[main_fg]="#${palette.base05}"
 
         # Title color for boxes
-        theme[title]="${palette.base05}"
+        theme[title]="#${palette.base05}"
 
         # Highlight color for keyboard shortcuts
-        theme[hi_fg]="${palette.base0D}"
+        theme[hi_fg]="#${palette.base0D}"
 
         # Background color of selected item in processes box
-        theme[selected_bg]="${palette.base01}"
+        theme[selected_bg]="#${palette.base01}"
 
         # Foreground color of selected item in processes box
-        theme[selected_fg]="${palette.base05}"
+        theme[selected_fg]="#${palette.base05}"
 
         # Color of inactive/disabled text
-        theme[inactive_fg]="${palette.base04}"
+        theme[inactive_fg]="#${palette.base04}"
 
         # Misc colors for processes box including mini cpu graphs, details memory graph and details status text
-        theme[proc_misc]="${palette.base0D}"
+        theme[proc_misc]="#${palette.base0D}"
 
         # Cpu box outline color
-        theme[cpu_box]="${palette.base0B}"
+        theme[cpu_box]="#${palette.base0B}"
 
         # Memory/disks box outline color
-        theme[mem_box]="${palette.base09}"
+        theme[mem_box]="#${palette.base09}"
 
         # Net up/down box outline color
-        theme[net_box]="${palette.base0E}"
+        theme[net_box]="#${palette.base0E}"
 
         # Processes box outline color
-        theme[proc_box]="${palette.base0C}"
+        theme[proc_box]="#${palette.base0C}"
 
         # Box divider line and small boxes line color
-        theme[div_line]="${palette.base04}"
+        theme[div_line]="#${palette.base04}"
 
         # Temperature graph colors
-        theme[temp_start]="${palette.base0B}"
-        theme[temp_mid]="${palette.base0A}"
-        theme[temp_end]="${palette.base08}"
+        theme[temp_start]="#${palette.base0B}"
+        theme[temp_mid]="#${palette.base0A}"
+        theme[temp_end]="#${palette.base08}"
 
         # CPU graph colors
-        theme[cpu_start]="${palette.base0B}"
-        theme[cpu_mid]="${palette.base0A}"
-        theme[cpu_end]="${palette.base08}"
+        theme[cpu_start]="#${palette.base0B}"
+        theme[cpu_mid]="#${palette.base0A}"
+        theme[cpu_end]="#${palette.base08}"
 
         # Mem/Disk free meter
-        theme[free_start]="${palette.base0B}"
+        theme[free_start]="#${palette.base0B}"
 
         # Mem/Disk cached meter
-        theme[cached_start]="${palette.base0A}"
+        theme[cached_start]="#${palette.base0A}"
 
         # Mem/Disk available meter
-        theme[available_start]="${palette.base09}"
+        theme[available_start]="#${palette.base09}"
 
         # Mem/Disk used meter
-        theme[used_start]="${palette.base08}"
+        theme[used_start]="#${palette.base08}"
 
         # Download graph colors
-        theme[download_start]="${palette.base0E}"
-        theme[download_mid]="${palette.base0D}"
-        theme[download_end]="${palette.base0C}"
+        theme[download_start]="#${palette.base0E}"
+        theme[download_mid]="#${palette.base0D}"
+        theme[download_end]="#${palette.base0C}"
 
         # Upload graph colors
-        theme[upload_start]="${palette.base0E}"
-        theme[upload_mid]="${palette.base0D}"
-        theme[upload_end]="${palette.base0C}"
+        theme[upload_start]="#${palette.base0E}"
+        theme[upload_mid]="#${palette.base0D}"
+        theme[upload_end]="#${palette.base0C}"
       '';
     };
   };
@@ -124,8 +124,8 @@ in {
       freq_mode = "first";
       clock_format = "%X";
       background_update = true;
-      custom_cpu_name = ";
-      disks_filter = ";
+      custom_cpu_name = "";
+      disks_filter = "";
       mem_graphs = true;
       mem_below_net = false;
       zfs_arc_cached = true;
@@ -139,12 +139,12 @@ in {
       show_io_stat = true;
       io_mode = false;
       io_graph_combined = false;
-      io_graph_speeds = ";
+      io_graph_speeds = "";
       net_download = 100;
       net_upload = 100;
       net_auto = true;
       net_sync = true;
-      net_iface = ";
+      net_iface = "";
       show_battery = true;
       selected_battery = "Auto";
       show_battery_watts = true;
