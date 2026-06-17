@@ -3,9 +3,8 @@
   pkgs,
   lib,
   ...
-}: let
-  cfg = config.omarchy;
-in {
+}:
+{
   programs.kitty = {
     enable = lib.mkDefault true;
 
@@ -14,8 +13,11 @@ in {
       size = lib.mkDefault 12;
     };
 
+    # Load theme from runtime config (allows dynamic theme switching).
+    # The generated file at `~/.config/omarchy/current/theme/kitty.conf`
+    # is produced by `modules/home-manager/theme-generator.nix` and
+    # updated when the user switches theme via `omarchy-theme-set`.
     settings = lib.mkDefault {
-      # Load theme from runtime config (allows dynamic theme switching)
       include = "~/.config/omarchy/current/theme/kitty.conf";
 
       # Window appearance

@@ -198,4 +198,26 @@
     base0E = "8bc9eb"; # Keywords (light sky)
     base0F = "4d86b0"; # Deprecated (blue)
   };
+
+  glats = {
+    slug = "glats";
+    scheme = "Glats";
+    author = "glats";
+    base00 = "000000"; # Default Background
+    base01 = "0a0a0a"; # Lighter Background
+    base02 = "505050"; # Selection Background
+    base03 = "767676"; # Comments, Invisibles
+    base04 = "a0a0a0"; # Dark Foreground
+    base05 = "e0e0e0"; # Default Foreground
+    base06 = "f0f0f0"; # Light Foreground
+    base07 = "ffffff"; # Light Background
+    base08 = "cc0403"; # Variables (red)
+    base09 = "ff8800"; # Integers (orange)
+    base0A = "cecb00"; # Classes (yellow)
+    base0B = "19cb00"; # Strings (green)
+    base0C = "0dcdcd"; # Regex (cyan)
+    base0D = "0d73cc"; # Functions (blue)
+    base0E = "cb1ed1"; # Keywords (magenta)
+    base0F = "ff6600"; # Deprecated
+  };
 }

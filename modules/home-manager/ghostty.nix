@@ -2,10 +2,12 @@
   config,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
   palette = config.colorScheme.palette;
-in {
+in
+{
   programs.ghostty = {
     enable = true;
     settings = {
@@ -20,7 +22,10 @@ in {
       font-style = "Regular";
       font-size = 9;
 
-      # Load theme from runtime config (allows dynamic theme switching)
+      # Load theme from runtime config (allows dynamic theme switching).
+      # The generated file at `~/.config/omarchy/current/theme/ghostty.conf`
+      # is produced by `modules/home-manager/theme-generator.nix` and
+      # updated when the user switches theme via `omarchy-theme-set`.
       config-file = "?~/.config/omarchy/current/theme/ghostty.conf";
 
       # Cursor styling
