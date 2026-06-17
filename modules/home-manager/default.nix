@@ -137,6 +137,21 @@ in {
     "$HOME/.local/share/omarchy/bin"
   ];
 
+  # Inject the omarchy bin directory into the systemd user manager's
+  # environment via environment.d(5). `home.sessionPath` only updates
+  # the shell-sourced `hm-session-vars.sh` — it does not reach the
+  # systemd user manager, which is what the `uwsm-app-daemon` (and any
+  # service launched outside a sourced shell) inherits. Without this
+  # file, `uwsm-app -- <bare-name>` cannot resolve any omarchy helper
+  # script and surfaces as an "App failure" mako notification.
+  #
+  # Filename `99-` ensures this PATH wins over the default
+  # `10-home-manager.conf`. The literal `$PATH` is systemd's "value of
+  # PATH from the manager's environment", not a shell expansion.
+  xdg.configFile."environment.d/99-omarchy-path.conf".text = ''
+    PATH=${config.home.homeDirectory}/.local/share/omarchy/bin:$PATH
+  '';
+
   # Copy logo.txt to screensaver.txt on first use (user-customizable)
   home.activation.copyScreensaverTxt = lib.hm.dag.entryAfter ["writeBoundary"] ''
     if [ ! -f "$HOME/.config/omarchy/branding/screensaver.txt" ]; then
