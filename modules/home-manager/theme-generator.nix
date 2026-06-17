@@ -46,6 +46,10 @@ let
 
   # Resolve the base16 palette for a theme name. Returns a flat attrset
   # with base00..base0F keys (hex strings, no leading `#`).
+  # Both branches now return `.palette` so the rest of the generator can
+  # treat them uniformly — the custom schemes in
+  # `modules/custom-base16-schemes.nix` use the same nix-colors shape
+  # (slug/name/author/palette), so the path mirrors the nix-colors side.
   paletteFor =
     themeName:
     let
@@ -53,7 +57,7 @@ let
       useCustom = t ? custom-scheme && t.custom-scheme;
     in
     if useCustom then
-      customSchemes.${t.base16-theme}
+      customSchemes.${t.base16-theme}.palette
     else
       inputs.nix-colors.colorSchemes.${t.base16-theme}.palette;
 
