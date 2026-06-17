@@ -37,6 +37,7 @@ lib: {
         "white"
         "retro-82"
         "lumon"
+        "glats"
       ];
       default = "tokyo-night";
       description = "Theme to use for Omarchy configuration";

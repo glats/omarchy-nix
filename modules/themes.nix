@@ -118,4 +118,10 @@
     vscode-theme = "Lumon";
     custom-scheme = true;
   };
+
+  "glats" = {
+    base16-theme = "glats";
+    vscode-theme = "Glats";
+    custom-scheme = true;
+  };
 }
