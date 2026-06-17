@@ -84,7 +84,12 @@ in {
   };
 
   # UWSM integration for Hyprland
-  programs.uwsm.enable = lib.mkIf cfg.seamless_boot.enable true;
+  # Decoupled from `omarchy.seamless_boot.enable` so that omarchy userland
+  # scripts (omarchy-launch-walker, omarchy-toggle-*, omarchy-restart-app,
+  # etc.) can always invoke `uwsm-app` to start GUI daemons as detached
+  # children of the session, even when the host uses a traditional login
+  # manager (tuigreet) and does not enable Plymouth/auto-login.
+  programs.uwsm.enable = true;
 
   # Login configuration
   services.greetd = let
