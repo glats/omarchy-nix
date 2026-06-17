@@ -14,6 +14,9 @@ inputs: {
     exec = "${pkgs.uwsm}/bin/uwsm start -F -- start-hyprland";
     type = "Application";
     categories = [ ];
+    # Identifies this entry as the Hyprland session for greeters like
+    # greetd/tuigreet (XDG Desktop Entry Spec: DesktopNames key).
+    desktopNames = [ "Hyprland" ];
   };
 in {
   programs.hyprland = {
@@ -34,6 +37,7 @@ Name=Hyprland (UWSM)
 Comment=Hyprland compositor managed by UWSM
 Exec=${pkgs.uwsm}/bin/uwsm start -F -- start-hyprland
 Type=Application
+DesktopNames=Hyprland
 EOF
     '')
   ];
