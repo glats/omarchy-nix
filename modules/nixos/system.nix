@@ -108,7 +108,7 @@ in {
       })
       # Traditional tuigreet when disabled
       (lib.mkIf (!cfg.seamless_boot.enable) {
-        default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+        default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd start-hyprland";
       })
     ];
   };
