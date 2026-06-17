@@ -7,14 +7,17 @@
 #      custom themes, or any scheme available from `inputs.nix-colors`).
 #
 # For every theme registered in `modules/themes.nix` we:
-#   * Resolve the base16 palette (custom scheme or nix-colors lookup)
+#   * Resolve the base16 palette (custom scheme or nix-colors lookup).
+#     Both sources return hex strings without a leading `#`, matching the
+#     shape of `config.colorScheme.palette` exposed by nix-colors' home-manager
+#     module (which strips any user-provided `#`).
 #   * Materialize 14 text/config files in `~/.config/omarchy/themes/<theme>/`
 #     from the palette (alacritty, ghostty, kitty, btop, mako, swayosd,
-#     walker, waybar, hyprland, hyprlock, zellij, plus vscode/chromium/icons)
+#     walker, waybar, hyprland, hyprlock, zellij, plus vscode/chromium/icons).
 #   * Copy any `backgrounds/` directory that ships in `config/themes/<theme>/`
-#     so wallpapers remain available
+#     so wallpapers remain available.
 #   * Copy other static extras (previews, neovim.lua, hyprland-preview-share-picker.css)
-#     that aren't in the generated set
+#     that aren't in the generated set.
 #
 # A symlink at `~/.config/omarchy/current/theme` points to the active theme.
 inputs: {
@@ -50,7 +53,7 @@ let
     in
       if useCustom
       then customSchemes.${t.base16-theme}
-      else inputs.nix-colors.colorSchemes.${t.base16-theme}.colors;
+      else inputs.nix-colors.colorSchemes.${t.base16-theme}.palette;
 
   # Files generated from the palette for every theme.
   generatedFileNames = [
