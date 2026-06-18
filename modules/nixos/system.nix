@@ -225,5 +225,17 @@ in {
     noto-fonts-color-emoji
     nerd-fonts.caskaydia-mono
     nerd-fonts.jetbrains-mono
+
+    # Omarchy icon font (U+E900 logo glyph) — required at system level so
+    # fontconfig picks it up for waybar, walker, and other system services.
+    (pkgs.stdenvNoCC.mkDerivation {
+      name = "omarchy-font";
+      src = ../../config;
+      dontUnpack = true;
+      installPhase = ''
+        mkdir -p $out/share/fonts/truetype
+        cp $src/omarchy.ttf $out/share/fonts/truetype/omarchy.ttf
+      '';
+    })
   ];
 }
