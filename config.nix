@@ -315,6 +315,32 @@ lib: {
       default = {};
       description = "Voxtype voice dictation configuration";
     };
+    wifi = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          backend = lib.mkOption {
+            type = lib.types.enum [ "nm-iwd" "standalone-iwd" ];
+            default = "nm-iwd";
+            description = ''
+              WiFi management backend mode:
+
+              - `"nm-iwd"` (default): NetworkManager manages WiFi through the iwd
+                D-Bus backend. NM handles connections, DHCP, and DNS. Use standard
+                desktop WiFi controls (nm-applet, nmtui, nmcli). Impala won't work
+                because NM registers as iwd's netconfig agent.
+
+              - `"standalone-iwd"`: iwd runs independently for WiFi. NM ignores
+                wlan0 and handles ethernet/Docker. iwd manages its own DHCP and
+                DNS (via systemd-resolved). Impala works because NM doesn't
+                interfere with iwd's D-Bus interface.
+            '';
+            example = "standalone-iwd";
+          };
+        };
+      };
+      default = {};
+      description = "WiFi management configuration";
+    };
     hardware = lib.mkOption {
       type = lib.types.submodule {
         options = {

@@ -211,13 +211,34 @@ in {
   services.resolved.enable = true;
   hardware.bluetooth.enable = true;
 
-  # Use iwd for wifi (required by impala TUI)
+  # iwd is always available (required by impala TUI and omarchy app launchers)
   networking.wireless.iwd.enable = true;
+
   networking = {
     networkmanager = {
       enable = true;
-      wifi.backend = "iwd";  # Use iwd as wifi backend for NetworkManager
+
+      # wifi.backend = "nm-iwd": NM manages WiFi through iwd backend.
+      #   NM registers as iwd's D-Bus netconfig agent. Use standard
+      #   desktop WiFi controls (nm-applet, nmtui).
+      # wifi.backend = "standalone-iwd": iwd runs independently for WiFi.
+      #   NM ignores wlan0. impala/iwctl talk directly to iwd. iwd
+      #   handles its own DHCP and DNS via systemd-resolved.
+      wifi.backend = lib.mkIf (cfg.wifi.backend != "standalone-iwd") "iwd";
+      unmanaged = lib.mkIf (cfg.wifi.backend == "standalone-iwd") [ "interface-name:wlan0" ];
     };
+  };
+
+  # Prevent NixOS from enabling wpa_supplicant when NM uses default backend
+  # (standalone-iwd mode). The NM module sets wireless.enable = true for
+  # wpa_supplicant, which conflicts with iwd's assertion. We force it off.
+  networking.wireless.enable = lib.mkIf (cfg.wifi.backend == "standalone-iwd") (lib.mkForce false);
+
+  # iwd standalone mode: enable iwd's built-in DHCP and DNS integration
+  # with systemd-resolved (NM's netconfig agent is not registered).
+  networking.wireless.iwd.settings = lib.mkIf (cfg.wifi.backend == "standalone-iwd") {
+    General.EnableNetworkConfiguration = true;
+    Network.NameResolvingService = "systemd";
   };
 
   fonts.packages = with pkgs; [
