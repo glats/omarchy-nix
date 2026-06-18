@@ -64,7 +64,7 @@ in
         foreground = "#${palette.base05}";
 
         selection-background = "#${palette.base02}";
-        selection-foreground = "#${palette.base00}";
+        selection-foreground = "#${palette.base05}";
         palette = [
           "0=#${palette.base00}"
           "1=#${palette.base08}"
