@@ -290,7 +290,7 @@ show_about() {
 }
 
 show_system_menu() {
-  local options="󱄄  Screensaver\n  Lock"
+  local options="󱄄  Screensaver\n󰍁  Lock"
   [[ ! -f ~/.local/state/omarchy/toggles/suspend-off ]] && options="$options\n󰒲  Suspend"
   options="$options\n󰍃  Logout\n󰜉  Restart\n󰐥  Shutdown"
 
