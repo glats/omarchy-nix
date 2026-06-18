@@ -10,6 +10,7 @@ inputs: {
   surfaceRgb = "rgb(${convert ", " palette.base02})";
   foregroundRgb = "rgb(${convert ", " palette.base05})";
   foregroundMutedRgb = "rgb(${convert ", " palette.base04})";
+  checkColorRgba = "rgba(${convert ", " palette.base0A}, 1.0)";
 in {
   programs.hyprlock = {
     enable = true;
@@ -47,7 +48,7 @@ in {
 
         # placeholder_color removed in newer hyprlock - using default
         placeholder_text = "  Enter Password 󰈷 ";
-        check_color = "rgba(131, 192, 146, 1.0)";
+        check_color = checkColorRgba;
         fail_text = "<i>$FAIL ($ATTEMPTS)</i>";
 
         rounding = 0;

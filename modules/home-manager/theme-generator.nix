@@ -284,6 +284,7 @@ let
   mkWaybar = p: ''
     @define-color foreground #${p.base05};
     @define-color background #${p.base00};
+    @define-color warning #${p.base08};
   '';
 
   mkHyprland = p: ''

@@ -82,12 +82,12 @@ tooltip {
 }
 
 #custom-screenrecording-indicator.active {
-  color: #a55555;
+  color: @warning;
 }
 
 #custom-idle-indicator.active,
 #custom-notification-silencing-indicator.active {
-  color: #a55555;
+  color: @warning;
 }
 
 #custom-voxtype {
@@ -96,5 +96,5 @@ tooltip {
 }
 
 #custom-voxtype.recording {
-  color: #a55555;
+  color: @warning;
 }

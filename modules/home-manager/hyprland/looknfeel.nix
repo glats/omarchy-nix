@@ -6,8 +6,9 @@
   hexToRgba = hex: alpha: let
   in "rgba(${hex}${alpha})";
 
-  inactiveBorder = hexToRgba config.colorScheme.palette.base09 "aa";
+  inactiveBorder = hexToRgba config.colorScheme.palette.base01 "aa";
   activeBorder = hexToRgba config.colorScheme.palette.base0D "aa";
+  shadowColor = hexToRgba config.colorScheme.palette.base00 "ee";
 in {
   wayland.windowManager.hyprland.extraConfig = ''
     group {
@@ -64,7 +65,7 @@ in {
         enabled = true;
         range = 2;
         render_power = 3;
-        color = "rgba(1a1a1aee)";
+        color = shadowColor;
       };
 
       blur = {
