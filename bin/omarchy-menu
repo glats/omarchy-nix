@@ -69,7 +69,7 @@ open_in_editor() {
 }
 
 show_learn_menu() {
-  case $(menu "Learn" "  Keybindings\n  Omarchy\n  Hyprland\n  NixOS\n  Neovim\n󱆃  Bash") in
+  case $(menu "Learn" "󰌌  Keybindings\n󰆥  Omarchy\n󰕰  Hyprland\n󱄅  NixOS\n󰙴  Neovim\n󱆃  Bash") in
   *Keybindings*) omarchy-menu-keybindings ;;
   *Omarchy*) omarchy-launch-webapp "https://learn.omacom.io/2/the-omarchy-manual" ;;
   *Hyprland*) omarchy-launch-webapp "https://wiki.hypr.land/" ;;
@@ -81,7 +81,7 @@ show_learn_menu() {
 }
 
 show_trigger_menu() {
-  case $(menu "Trigger" "  Capture\n  Share\n󰔎  Toggle") in
+  case $(menu "Trigger" "󰄀  Capture\n󰒖  Share\n󰔎  Toggle") in
   *Capture*) show_capture_menu ;;
   *Share*) show_share_menu ;;
   *Toggle*) show_toggle_menu ;;
@@ -90,7 +90,7 @@ show_trigger_menu() {
 }
 
 show_capture_menu() {
-  case $(menu "Capture" "  Screenshot\n  Screenrecord\n󰃉  Color") in
+  case $(menu "Capture" "󰍹  Screenshot\n󰕧  Screenrecord\n󰃉  Color") in
   *Screenshot*) omarchy-capture-screenshot ;;
   *Screenrecord*) show_screenrecord_menu ;;
   *Color*) pkill hyprpicker || hyprpicker -a ;;
@@ -128,7 +128,7 @@ show_webcam_select_menu() {
 show_screenrecord_menu() {
   omarchy-capture-screenrecording --stop-recording && exit 0
 
-  case $(menu "Screenrecord" "  With no audio\n  With desktop audio\n  With desktop + microphone audio\n  With desktop + microphone audio + webcam") in
+  case $(menu "Screenrecord" "󰖁  With no audio\n󰕾  With desktop audio\n󰍬  With desktop + microphone audio\n󰖠  With desktop + microphone audio + webcam") in
   *"With no audio") omarchy-capture-screenrecording ;;
   *"With desktop audio") omarchy-capture-screenrecording --with-desktop-audio ;;
   *"With desktop + microphone audio") omarchy-capture-screenrecording --with-desktop-audio --with-microphone-audio ;;
@@ -144,7 +144,7 @@ show_screenrecord_menu() {
 }
 
 show_share_menu() {
-  case $(menu "Share" "  Clipboard\n  File \n  Folder") in
+  case $(menu "Share" "󰅇  Clipboard\n󰈔  File \n󰉋  Folder") in
   *Clipboard*) omarchy-menu-share clipboard ;;
   *File*) terminal bash -c "omarchy-menu-share file" ;;
   *Folder*) terminal bash -c "omarchy-menu-share folder" ;;
@@ -153,7 +153,7 @@ show_share_menu() {
 }
 
 show_toggle_menu() {
-  case $(menu "Toggle" "󱄄  Screensaver\n󰔎  Nightlight\n󱫖  Idle Lock\n󰍜  Top Bar\n󱂬  Workspace Layout\n  Window Gaps\n  1-Window Ratio\n󰍹  Display Scaling\n󰛧  Laptop Display") in
+  case $(menu "Toggle" "󱄄  Screensaver\n󰔎  Nightlight\n󱫖  Idle Lock\n󰍜  Top Bar\n󱂬  Workspace Layout\n󰋁  Window Gaps\n󰆡  1-Window Ratio\n󰍹  Display Scaling\n󰛧  Laptop Display") in
   *Screensaver*) omarchy-toggle-screensaver ;;
   *Nightlight*) omarchy-toggle-nightlight ;;
   *Idle*) omarchy-toggle-idle ;;
@@ -168,7 +168,7 @@ show_toggle_menu() {
 }
 
 show_style_menu() {
-  case $(menu "Style" "󰸌  Theme\n  Background\n󱄄  Screensaver\n  About") in
+  case $(menu "Style" "󰸌  Theme\n󰋩  Background\n󱄄  Screensaver\n󰋼  About") in
   *Theme*) show_theme_menu ;;
   *Background*) show_background_menu ;;
   *Screensaver*) open_in_editor ~/.config/omarchy/branding/screensaver.txt ;;
@@ -186,10 +186,10 @@ show_background_menu() {
 }
 
 show_setup_menu() {
-  local options="  Audio\n  Wifi\n󰂯  Bluetooth\n󱐋  Power Profile\n  System Sleep\n󰍹  Monitors"
-  [[ -f ~/.config/hypr/bindings.conf ]] && options="$options\n  Keybindings"
-  [[ -f ~/.config/hypr/input.conf ]] && options="$options\n  Input"
-  options="$options\n  Config\n  Update Omarchy\n  Timezone\n  Password"
+  local options="󰓃  Audio\n󰖩  Wifi\n󰂯  Bluetooth\n󱐋  Power Profile\n󰒲  System Sleep\n󰍹  Monitors"
+  [[ -f ~/.config/hypr/bindings.conf ]] && options="$options\n󰌌  Keybindings"
+  [[ -f ~/.config/hypr/input.conf ]] && options="$options\n󰘮  Input"
+  options="$options\n󰙵  Config\n󰚰  Update Omarchy\n󰇧  Timezone\n󰌆  Password"
 
   case $(menu "Setup" "$options") in
   *Audio*) omarchy-launch-audio ;;
@@ -219,7 +219,7 @@ show_setup_power_menu() {
 }
 
 show_setup_security_menu() {
-  case $(menu "Setup" "󰈷  Fingerprint\n  Fido2") in
+  case $(menu "Setup" "󰈷  Fingerprint\n󰯄  Fido2") in
   *Fingerprint*) present_terminal omarchy-setup-fingerprint ;;
   *Fido2*) present_terminal omarchy-setup-fido2 ;;
   *) show_setup_menu ;;
@@ -227,7 +227,7 @@ show_setup_security_menu() {
 }
 
 show_setup_config_menu() {
-  case $(menu "Setup" "  Hyprland\n  Hypridle\n  Hyprlock\n  Hyprsunset\n  Swayosd\n  Tmux\n󰌧  Walker\n󰍜  Waybar\n󰞅  XCompose") in
+  case $(menu "Setup" "󰕰  Hyprland\n󰥔  Hypridle\n󰌾  Hyprlock\n󰖚  Hyprsunset\n󰍹  Swayosd\n󰆍  Tmux\n󰌧  Walker\n󰍜  Waybar\n󰞅  XCompose") in
   *Hyprland*) open_in_editor ~/.config/hypr/hyprland.conf ;;
   *Hypridle*) open_in_editor ~/.config/hypr/hypridle.conf && omarchy-restart-hypridle ;;
   *Hyprlock*) open_in_editor ~/.config/hypr/hyprlock.conf ;;
@@ -257,7 +257,7 @@ show_setup_system_menu() {
 }
 
 show_restart_menu() {
-  case $(menu "Restart" "  Process\n󰇅  Hardware") in
+  case $(menu "Restart" "󰙵  Process\n󰇅  Hardware") in
   *Process*) show_restart_process_menu ;;
   *Hardware*) show_restart_hardware_menu ;;
   *) show_main_menu ;;
@@ -265,7 +265,7 @@ show_restart_menu() {
 }
 
 show_restart_process_menu() {
-  case $(menu "Restart" "  Hypridle\n  Hyprsunset\n  Swayosd\n󰌧  Walker\n󰍜  Waybar") in
+  case $(menu "Restart" "󰥔  Hypridle\n󰖚  Hyprsunset\n󰍹  Swayosd\n󰌧  Walker\n󰍜  Waybar") in
   *Hypridle*) omarchy-restart-hypridle ;;
   *Hyprsunset*) omarchy-restart-hyprsunset ;;
   *Swayosd*) omarchy-restart-swayosd ;;
@@ -276,7 +276,7 @@ show_restart_process_menu() {
 }
 
 show_restart_hardware_menu() {
-  case $(menu "Restart" "  Audio\n󱚾  Wi-Fi\n󰂯  Bluetooth\n󰟸  Trackpad") in
+  case $(menu "Restart" "󰓃  Audio\n󱚾  Wi-Fi\n󰂯  Bluetooth\n󰟸  Trackpad") in
   *Audio*) present_terminal omarchy-restart-pipewire ;;
   *Wi-Fi*) present_terminal omarchy-restart-wifi ;;
   *Bluetooth*) present_terminal omarchy-restart-bluetooth ;;
@@ -306,7 +306,7 @@ show_system_menu() {
 }
 
 show_main_menu() {
-  go_to_menu "$(menu "Go" "󰀻  Apps\n󰧑  Learn\n󱓞  Trigger\n  Style\n  Setup\n  Restart\n  About\n  System")"
+  go_to_menu "$(menu "Go" "󰀻  Apps\n󰧑  Learn\n󱓞  Trigger\n󰏘  Style\n󰒓  Setup\n󰑐  Restart\n󰋼  About\n󰕮  System")"
 }
 
 go_to_menu() {
