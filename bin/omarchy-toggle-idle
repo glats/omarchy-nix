@@ -2,11 +2,11 @@
 
 # omarchy:summary=Toggle hypridle idle locking
 
-if pgrep -x hypridle >/dev/null; then
-  pkill -x hypridle
+if systemctl --user is-active hypridle >/dev/null 2>&1; then
+  systemctl --user stop hypridle
   notify-send -u low "󱫖    Stop locking computer when idle"
 else
-  uwsm-app -- hypridle >/dev/null 2>&1 &
+  systemctl --user start hypridle
   notify-send -u low "󱫖    Now locking computer when idle"
 fi
 
