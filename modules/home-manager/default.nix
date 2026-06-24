@@ -26,6 +26,21 @@ inputs: {
     if selectedTheme ? custom-scheme && selectedTheme.custom-scheme
     then customSchemes.${selectedTheme.base16-theme}
     else inputs.nix-colors.colorSchemes.${selectedTheme.base16-theme};
+
+  # Build an executable copy of the bin scripts — the git source files are not
+  # tracked with the executable bit (100644), and Nix store deployments preserve
+  # the original permissions.  Without the +x bit, Hyprland's `exec` dispatcher
+  # cannot run them directly.
+  executableBinDir = pkgs.stdenv.mkDerivation {
+    name = "omarchy-bin-executable";
+    src = ../../bin;
+    phases = [ "installPhase" ];
+    installPhase = ''
+      mkdir -p $out
+      cp -r $src/* $out/
+      chmod -R +x $out
+    '';
+  };
 in {
   imports = [
     (import ./hyprland.nix inputs)
@@ -65,7 +80,7 @@ in {
 
   home.file = {
     ".local/share/omarchy/bin" = {
-      source = ../../bin;
+      source = executableBinDir;
       recursive = true;
     };
     ".config/omarchy/branding" = {
