@@ -21,9 +21,14 @@ inputs: {
 in {
   programs.hyprland = {
     enable = true;
-    # package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    # Use nixpkgs-provided Hyprland and portal packages as the canonical
+    # default. The omarchy-nix NixOS module is the SOLE owner of
+    # `programs.hyprland.package` and `programs.hyprland.portalPackage`.
+    # Local consumer hosts (e.g. nixos-hosts/hosts/t14) MUST NOT override
+    # these options; the Home Manager layer defers via `lib.mkDefault null`
+    # (see modules/home-manager/hyprland.nix).
+    package = pkgs.hyprland;
+    portalPackage = pkgs.xdg-desktop-portal-hyprland;
     withUWSM = cfg.seamless_boot.enable;
   };
 
