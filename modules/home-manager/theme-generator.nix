@@ -438,6 +438,7 @@ in
   # Create initial symlink to current theme
   home.activation.omarchy-theme-symlink = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     THEME_SYMLINK="$HOME/.config/omarchy/current/theme"
+    THEME_NAME_FILE="$HOME/.config/omarchy/current/theme.name"
     CURRENT_THEME="${config.omarchy.theme}"
 
     mkdir -p "$(dirname "$THEME_SYMLINK")"
@@ -445,6 +446,11 @@ in
     # Only create symlink if it doesn't exist (don't override user's selection)
     if [[ ! -L "$THEME_SYMLINK" ]]; then
       $DRY_RUN_CMD ln -sf "$HOME/.config/omarchy/themes/$CURRENT_THEME" "$THEME_SYMLINK"
+    fi
+
+    # Write theme.name so the lua selector can find user custom backgrounds
+    if [[ ! -f "$THEME_NAME_FILE" ]]; then
+      printf '%s\n' "$CURRENT_THEME" > "$THEME_NAME_FILE"
     fi
   '';
 }
