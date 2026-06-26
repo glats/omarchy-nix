@@ -1,0 +1,17 @@
+#!/bin/bash
+# omarchy:summary=Show current weather from wttr.in
+# omarchy:args=[location]
+
+set -euo pipefail
+
+LOCATION="${1:-}"
+URL="https://wttr.in"
+[[ -n "$LOCATION" ]] && URL="$URL/$LOCATION"
+
+# Fetch weather (compact format: condition + temp + wind)
+if ! DATA=$(curl -sf --max-time 5 "$URL?format=%c+%t+%w" 2>/dev/null); then
+  echo "Weather unavailable (check network)" >&2
+  exit 1
+fi
+
+echo "$DATA"
