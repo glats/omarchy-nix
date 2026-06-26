@@ -3,17 +3,29 @@
 # omarchy:summary=Run a named hook, like post-update (available in ~/.config/omarchy/hooks/post-update).
 # omarchy:args=[name] [args...]
 
-set -e
-
 if (( $# < 1 )); then
   echo "Usage: omarchy-hook [name] [args...]"
   exit 1
 fi
 
 HOOK=$1
-HOOK_PATH="$HOME/.config/omarchy/hooks/$1"
+HOOK_DIR="$HOME/.config/omarchy/hooks/$1"
 shift
 
-if [[ -f $HOOK_PATH ]]; then
-  bash "$HOOK_PATH" "$@"
+# Run the single-file hook
+if [[ -f $HOOK_DIR ]]; then
+  bash "$HOOK_DIR" "$@" || echo "Warning: hook $1 failed (exit $?)" >&2
+fi
+
+# Run hooks from .d/ directory (skip .sample files)
+HOOK_D_DIR="${HOOK_DIR}.d"
+if [[ -d $HOOK_D_DIR ]]; then
+  for hook_file in "$HOOK_D_DIR"/*; do
+    [[ -f "$hook_file" ]] || continue
+    # Skip .sample files
+    case "$hook_file" in
+      *.sample) continue;;
+    esac
+    bash "$hook_file" "$@" || echo "Warning: hook ${hook_file##*/} failed (exit $?)" >&2
+  done
 fi

@@ -76,6 +76,7 @@ in {
     ./zellij.nix
     ./tmux.nix
     (import ./theme-generator.nix inputs)
+    ./omarchy-post-boot.nix
   ];
 
   home.file = {

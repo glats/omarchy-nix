@@ -74,6 +74,9 @@
 
         # Send notification
         ${pkgs.libnotify}/bin/notify-send "Theme changed to $THEME_NAME" -t 3000 2>/dev/null || true
+
+        # Notify omarchy hook system
+        omarchy-hook theme-set "$THEME_NAME" 2>/dev/null || true
       else
         echo "Failed to rebuild configuration"
         # Restore backup
@@ -96,7 +99,7 @@ in {
         Type = "oneshot";
         ExecStart = "${themeUpdateScript}";
         Environment = [
-          "PATH=/run/wrappers/bin:/run/current-system/sw/bin:${lib.makeBinPath [
+          "PATH=/run/wrappers/bin:/run/current-system/sw/bin:${config.home.homeDirectory}/.local/share/omarchy/bin:${lib.makeBinPath [
             pkgs.gnugrep
             pkgs.gnused
             pkgs.coreutils
