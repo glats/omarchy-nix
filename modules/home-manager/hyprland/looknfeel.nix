@@ -125,7 +125,6 @@ in {
       focus_on_activate = true;
       anr_missed_pings = 3;
       on_focus_under_fullscreen = 1;
-      log_level = "info";
     };
 
     cursor = {
