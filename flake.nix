@@ -57,9 +57,11 @@
         };
       };
 
-      # Standalone btop module — imports just the glats theme + settings
-      # without the full omarchy desktop (Hyprland, waybar, walker, etc.).
-      # Consumers must provide nix-colors (colorScheme.palette).
+      # Standalone btop module — glats theme + settings without the full
+      # omarchy desktop (Hyprland, waybar, walker, etc.).
+      #
+      # Consumers must import nix-colors themselves before this module
+      # (btop.nix reads config.colorScheme.palette at eval time).
       btop = {
         config,
         lib,
@@ -67,7 +69,6 @@
         ...
       }: {
         imports = [
-          nix-colors.homeManagerModules.default
           (import ./modules/home-manager/btop.nix)
         ];
       };
