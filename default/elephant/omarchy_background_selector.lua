@@ -58,7 +58,7 @@ function GetEntries()
             Text = FormatName(filename),
             Value = background,
             Actions = {
-              activate = "omarchy-theme-bg-set " .. ShellEscape(background),
+              activate = home .. "/.local/share/omarchy/bin/omarchy-theme-bg-set " .. ShellEscape(background),
             },
             Preview = background,
             PreviewType = "file",
