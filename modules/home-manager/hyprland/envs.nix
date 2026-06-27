@@ -61,9 +61,6 @@ in {
         "XDG_CURRENT_DESKTOP,Hyprland"
         "XDG_SESSION_TYPE,wayland"
         "XDG_SESSION_DESKTOP,Hyprland"
-
-        # Suppress DEBUG log spam from hyprutils CLogger
-        "LOG_LEVEL,info"
       ];
 
     xwayland = {
