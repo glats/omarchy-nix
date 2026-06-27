@@ -127,10 +127,6 @@ in {
       on_focus_under_fullscreen = 1;
     };
 
-    debug = {
-      enable_stdout_logs = false;
-    };
-
     cursor = {
       hide_on_key_press = true;
       warp_on_change_workspace = 1;

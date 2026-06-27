@@ -9,6 +9,15 @@ inputs: {
 
   elephantPkg = inputs.elephant.packages.${pkgs.stdenv.hostPlatform.system}.elephant;
 
+  hyprlandPkg = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+
+  # Wrapper around start-hyprland that silences early init logspam
+  # (Hyprland's CLogger prints DEBUG messages to stdout before the
+  # config is loaded and enable_stdout_logs takes effect).
+  hyprlandSession = pkgs.writeShellScript "hyprland-session" ''
+    exec ${hyprlandPkg}/bin/start-hyprland "$@" >/dev/null 2>&1
+  '';
+
   providersPkg = inputs.elephant.packages.${pkgs.stdenv.hostPlatform.system}.elephant-providers;
 
   elephantCombined = pkgs.stdenv.mkDerivation {
@@ -113,7 +122,7 @@ in {
       })
       # Traditional tuigreet when disabled
       (lib.mkIf (!cfg.seamless_boot.enable) {
-        default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd start-hyprland";
+        default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd ${hyprlandSession}";
       })
     ];
   };
