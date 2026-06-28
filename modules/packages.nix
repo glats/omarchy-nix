@@ -23,6 +23,7 @@ in {
     playerctl
     bibata-cursors
     gnome-themes-extra
+    gnome-disk-utility
     blueman
     clipse
     xdg-utils
