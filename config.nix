@@ -364,5 +364,28 @@ lib: {
       default = {};
       description = "Hardware-specific workarounds (off by default; enable per machine).";
     };
+    wayvnc = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable wayvnc — VNC server for wlroots-based Wayland compositors (screen capture via wlroots screencopy, VeNCrypt + PAM auth).";
+          };
+          port = lib.mkOption {
+            type = lib.types.port;
+            default = 5900;
+            description = "TCP port for wayvnc to listen on (default 5900 = VNC display :0).";
+          };
+          enable_pam = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Enable PAM authentication (validates VNC credentials against the host's PAM stack). Required for VeNCrypt/TLS auth.";
+          };
+        };
+      };
+      default = {};
+      description = "wayvnc VNC server configuration for Wayland compositors";
+    };
   };
 }

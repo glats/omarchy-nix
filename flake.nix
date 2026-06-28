@@ -53,7 +53,7 @@
         ];
         options.omarchy = (import ./config.nix lib).omarchyOptions;
         config = lib.mkIf (osConfig ? omarchy) {
-          omarchy = osConfig.omarchy;
+          omarchy = osConfig.omarchy or {};
         };
       };
 

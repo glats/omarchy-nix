@@ -77,6 +77,7 @@ in {
     ./tmux.nix
     (import ./theme-generator.nix inputs)
     ./omarchy-post-boot.nix
+    (import ./wayvnc.nix inputs)
   ];
 
   home.file = {
