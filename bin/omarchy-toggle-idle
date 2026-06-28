@@ -4,9 +4,15 @@
 
 if systemctl --user is-active hypridle >/dev/null 2>&1; then
   systemctl --user stop hypridle
+  # Also disable the screensaver
+  mkdir -p ~/.local/state/omarchy/toggles
+  touch ~/.local/state/omarchy/toggles/screensaver-off
+  # Kill any running screensaver
+  pkill -f org.omarchy.screensaver 2>/dev/null || true
   notify-send -u low "󱫖    Stop locking computer when idle"
 else
   systemctl --user start hypridle
+  rm -f ~/.local/state/omarchy/toggles/screensaver-off
   notify-send -u low "󱫖    Now locking computer when idle"
 fi
 
