@@ -24,7 +24,7 @@ in {
     # package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-    withUWSM = cfg.seamless_boot.enable;
+    withUWSM = lib.mkDefault true;
   };
 
   # Override the auto-generated desktop file with our fixed version
