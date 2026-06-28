@@ -10,6 +10,7 @@
     "group/tray-expander",
     "bluetooth",
     "network",
+    "custom/iwd-wifi",
     "pulseaudio",
     "cpu",
     "battery"
@@ -163,6 +164,12 @@
     "exec": "~/.config/waybar/indicators/notification-silencing.sh",
     "signal": 10,
     "return-type": "json"
+  },
+  "custom/iwd-wifi": {
+    "exec": "~/.config/waybar/indicators/iwd-wifi.sh",
+    "signal": 11,
+    "return-type": "json",
+    "on-click": "omarchy-launch-wifi"
   },
   "custom/voxtype": {
     "exec": "omarchy-voxtype-status",
