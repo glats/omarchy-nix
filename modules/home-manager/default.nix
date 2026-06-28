@@ -71,7 +71,6 @@ in {
     ./battery-monitor.nix
     ./voxtype.nix
     ./fonts.nix
-    ./imv.nix
     ./evince.nix
     ./zellij.nix
     ./tmux.nix
