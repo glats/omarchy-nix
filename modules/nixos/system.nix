@@ -145,7 +145,8 @@ in {
   # session.
   users.users.greeter = lib.mkIf (cfg.greeter.type == "regreet") {
     isSystemUser = true;
-    groups = [ "greeter" "video" ];
+    group = "greeter";
+    extraGroups = [ "video" ];
     home = "/var/lib/greeter";
     createHome = true;
   };
