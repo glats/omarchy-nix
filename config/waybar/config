@@ -12,6 +12,7 @@
     "network",
     "custom/iwd-wifi",
     "pulseaudio",
+    "custom/language",
     "cpu",
     "battery"
   ],
@@ -170,6 +171,13 @@
     "signal": 11,
     "return-type": "json",
     "on-click": "omarchy-launch-wifi"
+  },
+  "custom/language": {
+    "exec": "~/.local/share/omarchy/bin/kb-layout.sh",
+    "interval": 5,
+    "on-click": "~/.local/share/omarchy/bin/kb-toggle.sh",
+    "format": "{} ",
+    "tooltip": true
   },
   "custom/voxtype": {
     "exec": "omarchy-voxtype-status",
