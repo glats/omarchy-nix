@@ -115,7 +115,7 @@ Split across `modules/home-manager/hyprland/`:
 | `envs.nix` | Environment variables (`$browser`, `$terminal`, etc.) |
 
 ### Key behavior notes
-- Touchpad: `clickfinger_behavior = true` (two-finger right-click)
+- Touchpad: `clickfinger_behavior = true` (two-finger right-click), `gesture = "3, horizontal, workspace"` (3-finger horizontal swipe = workspace switch)
 - Keybindings: exact Omarchy set + fork additions (see shortcuts doc)
 - Universal clipboard: `SUPER+C/V/X` (Hyprland 0.54+ built-in)
 - Workspace cycling: `SUPER+TAB`

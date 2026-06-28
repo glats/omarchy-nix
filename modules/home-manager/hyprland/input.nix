@@ -17,6 +17,7 @@
     input.touchpad.natural_scroll = lib.mkDefault false;
     input.touchpad.scroll_factor = lib.mkDefault 0.4;
     input.touchpad.clickfinger_behavior = lib.mkDefault true;
+    input.touchpad.gesture = lib.mkDefault "3, horizontal, workspace";
 
     misc.key_press_enables_dpms = true;
     misc.mouse_move_enables_dpms = true;
