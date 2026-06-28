@@ -42,6 +42,11 @@ lib: {
       default = "tokyo-night";
       description = "Theme to use for Omarchy configuration";
     };
+    rotate_on_start = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Advance wallpaper to next image on every Hyprland session start";
+    };
     primary_font = lib.mkOption {
       type = lib.types.str;
       default = "Liberation Sans 11";
