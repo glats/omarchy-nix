@@ -6,7 +6,7 @@
   ...
 }: let
   cfg = config.omarchy;
-  hasNvidiaDrivers = builtins.elem "nvidia" osConfig.services.xserver.videoDrivers;
+  hasNvidiaDrivers = builtins.elem "nvidia" (osConfig.services.xserver.videoDrivers or []);
   nvidiaEnv = [
     "NVD_BACKEND,direct"
     "LIBVA_DRIVER_NAME,nvidia"
