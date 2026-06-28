@@ -93,7 +93,13 @@ in {
   # manager (tuigreet) and does not enable Plymouth/auto-login.
   programs.uwsm.enable = true;
 
-  # Login configuration
+  # Login configuration.
+  #
+  # Escape hatch: if the Hyprland/ReGreet greeter ever fails to start and
+  # the user is locked out, append `systemd.mask=greetd.service` to the
+  # kernel command line at the bootloader to skip greetd entirely and
+  # fall back to a VT login prompt. The console keymap (omarchy.tty) is
+  # preserved untouched, so the VT login still has a working keyboard.
   services.greetd = let
     # Use seamless_boot.username if set, otherwise fall back to main username
     loginUser = if cfg.seamless_boot.username != null
@@ -113,12 +119,53 @@ in {
           user = loginUser;
         };
       })
-      # Traditional tuigreet when disabled
-      (lib.mkIf (!cfg.seamless_boot.enable) {
+      # TUI greeter (default when seamless_boot is disabled)
+      (lib.mkIf (!cfg.seamless_boot.enable && cfg.greeter.type == "tuigreet") {
         default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd '${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop'";
+      })
+      # ReGreet (GTK) inside a minimal Hyprland session — exposes the
+      # keyboard layout toggle at the login screen. `lib.mkForce` overrides
+      # the `cage` default_session that `programs.regreet.enable` would
+      # otherwise install via its own `lib.mkDefault`.
+      (lib.mkIf (!cfg.seamless_boot.enable && cfg.greeter.type == "regreet") {
+        default_session = {
+          command = lib.mkForce "${pkgs.dbus}/bin/dbus-run-session ${pkgs.hyprland}/bin/Hyprland -c /etc/greetd/hyprland.conf";
+          user = "greeter";
+        };
       })
     ];
   };
+
+  # ReGreet: enable the module (package, GTK theme hooks, config helpers).
+  # Its built-in cage default_session is overridden above via `lib.mkForce`.
+  programs.regreet.enable = lib.mkIf (cfg.greeter.type == "regreet") true;
+
+  # ReGreet refuses to run as root; create a dedicated non-root user.
+  # `video` membership is required for Hyprland KMS access in the greeter
+  # session.
+  users.users.greeter = lib.mkIf (cfg.greeter.type == "regreet") {
+    isSystemUser = true;
+    groups = [ "greeter" "video" ];
+    home = "/var/lib/greeter";
+    createHome = true;
+  };
+  users.groups.greeter = lib.mkIf (cfg.greeter.type == "regreet") { };
+
+  # Greeter Hyprland config: launch ReGreet, then exit. Keyboard layout
+  # and XKB options come from `omarchy.greeter.keyboard.*` so the user's
+  # Alt+Shift toggle works at the password prompt.
+  environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") ''
+    exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
+    input {
+        kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
+        kb_options = ${cfg.greeter.keyboard.options}
+    }
+    misc {
+        disable_hyprland_logo = true
+        disable_splash_rendering = true
+        disable_hyprland_guiutils_check = true
+    }
+  '';
 
   # Binary cache for Walker (speeds up builds)
   nix.settings = {

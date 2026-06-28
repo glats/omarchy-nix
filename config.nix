@@ -271,6 +271,44 @@ lib: {
       default = {};
       description = "Seamless boot configuration options";
     };
+    greeter = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          type = lib.mkOption {
+            type = lib.types.enum [ "tuigreet" "regreet" ];
+            default = "tuigreet";
+            description = ''
+              Greeter backend for greetd when seamless_boot is disabled.
+              'tuigreet' uses the TUI; 'regreet' runs the GTK greeter inside a
+              minimal Hyprland session so the user's keyboard layout toggle is
+              available at the login screen.
+            '';
+          };
+          keyboard = lib.mkOption {
+            type = lib.types.submodule {
+              options = {
+                layouts = lib.mkOption {
+                  type = lib.types.listOf lib.types.str;
+                  default = [ "es" "latam" ];
+                  description = "Keyboard layouts (XKB names) exposed at the greeter screen. Comma-joined into Hyprland's `kb_layout`.";
+                  example = [ "es" "latam" ];
+                };
+                options = lib.mkOption {
+                  type = lib.types.str;
+                  default = "grp:alt_shift_toggle,compose:caps";
+                  description = "XKB options (layout toggle, compose key, etc.) for the greeter Hyprland session. Passed to Hyprland's `kb_options`.";
+                  example = "grp:alt_shift_toggle";
+                };
+              };
+            };
+            default = {};
+            description = "Keyboard configuration for the greeter Hyprland session. Only used when type = 'regreet'.";
+          };
+        };
+      };
+      default = {};
+      description = "Greeter configuration for the greetd login screen";
+    };
     light_theme_detection = lib.mkOption {
       type = lib.types.submodule {
         options = {
