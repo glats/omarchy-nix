@@ -39,6 +39,9 @@ in {
     wf-recorder
     gpu-screen-recorder
     slurp
+    grim
+    wl-clipboard
+    tesseract
     hyprland-preview-share-picker  # Custom package
     
     # Audio management
