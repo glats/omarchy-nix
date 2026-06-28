@@ -4,12 +4,15 @@
   lib,
   ...
 }:
+let
+  cfg = config.omarchy;
+in
 {
   programs.kitty = {
     enable = lib.mkDefault true;
 
     font = {
-      name = lib.mkDefault "JetBrainsMono Nerd Font";
+      name = lib.mkDefault cfg.fonts.kitty;
       size = lib.mkDefault 12;
     };
 
