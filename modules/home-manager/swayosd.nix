@@ -26,7 +26,7 @@ in {
     }
 
     label {
-      font-family: 'JetBrainsMono Nerd Font';
+      font-family: ${cfg.fonts.swayosd};
       font-size: 11pt;
 
       color: @label;

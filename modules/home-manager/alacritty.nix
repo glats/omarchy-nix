@@ -2,7 +2,9 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  cfg = config.omarchy;
+in {
   programs.alacritty = {
     enable = true;
     settings = {
@@ -19,15 +21,15 @@
       font = {
         size = 9;
         normal = {
-          family = "JetBrainsMono Nerd Font";
+          family = cfg.fonts.alacritty;
           style = "Regular";
         };
         bold = {
-          family = "JetBrainsMono Nerd Font";
+          family = cfg.fonts.alacritty;
           style = "Bold";
         };
         italic = {
-          family = "JetBrainsMono Nerd Font";
+          family = cfg.fonts.alacritty;
           style = "Italic";
         };
       };

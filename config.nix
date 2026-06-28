@@ -46,6 +46,59 @@ lib: {
       type = lib.types.str;
       default = "Liberation Sans 11";
     };
+    fonts = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          alacritty = lib.mkOption {
+            type = lib.types.str;
+            default = "monospace";
+            description = "Font family for alacritty terminal";
+          };
+          ghostty = lib.mkOption {
+            type = lib.types.str;
+            default = "monospace";
+            description = "Font family for ghostty terminal";
+          };
+          hyprlock = lib.mkOption {
+            type = lib.types.str;
+            default = "monospace";
+            description = "Font family for hyprlock screen locker";
+          };
+          kitty = lib.mkOption {
+            type = lib.types.str;
+            default = "monospace";
+            description = "Font family for kitty terminal";
+          };
+          mako = lib.mkOption {
+            type = lib.types.str;
+            default = "monospace";
+            description = "Font family for mako notifications";
+          };
+          rofi = lib.mkOption {
+            type = lib.types.str;
+            default = "monospace";
+            description = "Font family for rofi launcher";
+          };
+          swayosd = lib.mkOption {
+            type = lib.types.str;
+            default = "monospace";
+            description = "Font family for swayosd on-screen display";
+          };
+          walker = lib.mkOption {
+            type = lib.types.str;
+            default = "monospace";
+            description = "Font family for walker launcher";
+          };
+          waybar = lib.mkOption {
+            type = lib.types.str;
+            default = "monospace";
+            description = "Font family for waybar status bar";
+          };
+        };
+      };
+      default = {};
+      description = "Per-component font family configuration";
+    };
     vscode_settings = lib.mkOption {
       type = lib.types.attrs;
       default = {};

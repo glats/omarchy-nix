@@ -4,6 +4,7 @@ inputs: {
   lib,
   ...
 }: let
+  cfg = config.omarchy;
   palette = config.colorScheme.palette;
   convert = inputs.nix-colors.lib.conversions.hexToRGBString;
   backgroundRgb = "rgba(${convert ", " palette.base00}, 0.8)";
@@ -42,7 +43,7 @@ in {
         outer_color = foregroundRgb; # #d3c6aa
         outline_thickness = 4;
 
-        font_family = "CaskaydiaMono Nerd Font";
+        font_family = cfg.fonts.hyprlock;
         # font_size removed in newer hyprlock - using default
         font_color = foregroundRgb;
 
@@ -62,7 +63,7 @@ in {
         text_align = "center";
         color = "rgb(211, 198, 170)";
         font_size = 24;
-        font_family = "CaskaydiaMono Nerd Font";
+        font_family = cfg.fonts.hyprlock;
         position = "0, -100";
         halign = "center";
         valign = "center";

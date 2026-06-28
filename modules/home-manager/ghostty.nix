@@ -18,7 +18,7 @@ in
       resize-overlay = "never";
       gtk-toolbar-style = "flat";
 
-      font-family = "JetBrainsMono Nerd Font";
+      font-family = cfg.fonts.ghostty;
       font-style = "Regular";
       font-size = 9;
 
