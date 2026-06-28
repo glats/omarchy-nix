@@ -304,10 +304,17 @@
 in {
   wayland.windowManager.hyprland = {
     extraConfig = ''
+      # Render order matters: `bindd` is "last wins" in Hyprland, so `mainBindings`
+      # is emitted AFTER `quick_app_bindings` to guarantee that the universal
+      # clipboard entries (`SUPER, C` / `SUPER, V` / `SUPER, X`) cannot be shadowed
+      # by a user-supplied `quick_app_bindings` entry. Do not reorder these two
+      # blocks without also re-reading the clipboard contract in
+      # openspec/changes/omarchy-archlinux-copy-paste/specs/clipboard-keybindings/spec.md.
+
       # Quick app bindings
       ${mkBindd cfg.quick_app_bindings}
 
-      # Main descriptive bindings
+      # Main descriptive bindings (includes clipboard)
       ${mkBindd mainBindings}
 
       # Dictation bindings

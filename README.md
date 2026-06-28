@@ -236,11 +236,10 @@ omarchy.office_suite.enable = true;
 ### Webapps (Focus-or-Launch)
 - `SUPER + A` - ChatGPT
 - `SUPER SHIFT + A` - Grok
-- `SUPER + C` - Calendar (Hey)
+- `SUPER SHIFT + C` - Calendar (Hey)
 - `SUPER + E` - Email (Hey)
 - `SUPER + Y` - YouTube
-- `SUPER + X` - X/Twitter
-- `SUPER SHIFT + X` - Compose post on X
+- `SUPER SHIFT + X` - X/Twitter
 - `SUPER SHIFT + G` - WhatsApp
 
 ### Core Apps

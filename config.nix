@@ -213,12 +213,11 @@ lib: {
         # Web apps - using plain SUPER for frequently used apps
         "SUPER, A, ChatGPT, exec, ~/.local/share/omarchy/bin/omarchy-launch-or-focus-webapp chatgpt https://chatgpt.com"
         "SUPER SHIFT, A, Grok, exec, ~/.local/share/omarchy/bin/omarchy-launch-or-focus-webapp grok https://grok.com"
-        "SUPER, C, Calendar, exec, ~/.local/share/omarchy/bin/omarchy-launch-or-focus-webapp 'hey.*calendar' https://app.hey.com/calendar/weeks/"
+        "SUPER SHIFT, C, Calendar, exec, ~/.local/share/omarchy/bin/omarchy-launch-or-focus-webapp 'hey.*calendar' https://app.hey.com/calendar/weeks/"
         "SUPER, E, HEY Email, exec, ~/.local/share/omarchy/bin/omarchy-launch-or-focus-webapp hey https://app.hey.com"
         "SUPER, Y, YouTube, exec, ~/.local/share/omarchy/bin/omarchy-launch-or-focus-webapp youtube https://youtube.com/"
         "SUPER SHIFT, G, WhatsApp, exec, ~/.local/share/omarchy/bin/omarchy-launch-or-focus-webapp whatsapp https://web.whatsapp.com/"
-        "SUPER, X, X (Twitter), exec, ~/.local/share/omarchy/bin/omarchy-launch-or-focus-webapp 'x.com' https://x.com/"
-        "SUPER SHIFT, X, Compose post on X, exec, $webapp=https://x.com/compose/post"
+        "SUPER SHIFT, X, X (Twitter), exec, ~/.local/share/omarchy/bin/omarchy-launch-or-focus-webapp 'x.com' https://x.com/"
 
         # Core apps - using SUPER SHIFT to avoid conflicts with tiling keys
         "SUPER, RETURN, Terminal, exec, $terminal"
@@ -372,7 +371,7 @@ lib: {
       type = lib.types.submodule {
         options = {
           backend = lib.mkOption {
-            type = lib.types.enum [ "nm-iwd" "standalone-iwd" ];
+            type = lib.types.enum ["nm-iwd" "standalone-iwd"];
             default = "nm-iwd";
             description = ''
               WiFi management backend mode:
