@@ -43,13 +43,31 @@ EOF
   ];
 
   services.dbus.enable = true;
-  xdg.portal = {
+
+  # Patch xdg-desktop-portal-gtk to include cfg.usein tokens in UseIn.
+  # Without this, the portal framework filters out gtk on non-GNOME sessions
+  # (XDG_CURRENT_DESKTOP=Hyprland), and libadwaita apps silently lose Settings.
+  nixpkgs.overlays = lib.optionals cfg.xdg.portal.enable [
+    (final: prev: {
+      xdg-desktop-portal-gtk = prev.xdg-desktop-portal-gtk.overrideAttrs (old: {
+        postInstall = (old.postInstall or "") + ''
+          substituteInPlace $out/share/xdg-desktop-portal/portals/gtk.portal \
+            --replace-fail "UseIn=gnome" \
+            "UseIn=gnome;${lib.concatStringsSep ";" cfg.xdg.portal.usein}"
+        '';
+      });
+    })
+  ];
+
+  xdg.portal = lib.mkIf cfg.xdg.portal.enable {
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     config.common.default = "*";
-    config.hyprland.default = [ "hyprland" "gtk" ];
+    config.hyprland = {
+      default = lib.mkDefault [ "hyprland" "gtk" ];
+      "org.freedesktop.impl.portal.Settings" = lib.mkDefault [ "gtk" ];
+      # Enable InputCapture portal for screen sharing applications like Deskflow
+      "org.freedesktop.impl.portal.InputCapture" = [ "hyprland" ];
+    };
   };
-
-  # Enable InputCapture portal for screen sharing applications like Deskflow
-  xdg.portal.config.hyprland."org.freedesktop.impl.portal.InputCapture" = [ "hyprland" ];
 }

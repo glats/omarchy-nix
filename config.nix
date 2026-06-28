@@ -440,5 +440,27 @@ lib: {
       default = {};
       description = "wayvnc VNC server configuration for Wayland compositors";
     };
+    xdg = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          portal = {
+            enable = lib.mkEnableOption "xdg-desktop-portal-gtk UseIn patch and Settings routing for Hyprland"
+              // {default = true;};
+            usein = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [ "hyprland" ];
+              description = ''
+                Desktop tokens appended to xdg-desktop-portal-gtk's UseIn field
+                via nixpkgs.overlays + substituteInPlace. Required for libadwaita
+                apps to read Settings (color-scheme) on non-GNOME compositors.
+              '';
+              example = [ "hyprland" "sway" ];
+            };
+          };
+        };
+      };
+      default = {};
+      description = "XDG desktop portal integration options";
+    };
   };
 }
