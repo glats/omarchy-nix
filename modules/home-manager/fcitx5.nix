@@ -78,7 +78,7 @@ in
         After = [ "graphical-session.target" ];
       };
       Service = {
-        ExecStart = "${pkgs.fcitx5}/bin/fcitx5 -d";
+        ExecStart = "${pkgs.fcitx5}/bin/fcitx5";
         Restart = "on-failure";
       };
       Install = {
