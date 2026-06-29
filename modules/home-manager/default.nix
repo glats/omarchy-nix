@@ -141,6 +141,9 @@ in
     ".config/elephant/desktopapplications.toml" = {
       source = ../../config/elephant/desktopapplications.toml;
     };
+    ".config/elephant/files.toml" = {
+      source = ../../config/elephant/files.toml;
+    };
     ".local/share/omarchy/default/bash" = {
       source = ../../default/bash;
       recursive = true;

@@ -1,0 +1,23 @@
+[general]
+# Directories to ignore when indexing files. Regexp-based (Go regex).
+# These are build artifacts, caches, and system noise that users
+# never want to search for via walker's file finder (`.` prefix).
+ignored_dirs = [
+  # Go module cache
+  "/go/pkg/mod",
+  # Node.js / JavaScript
+  "/node_modules",
+  # Rust build artifacts
+  "/target",
+  # Python bytecode caches
+  "/__pycache__",
+  # Python virtual environments
+  "/.venv",
+  # Cargo registries and git checkouts
+  "/.cargo/registry",
+  "/.cargo/git",
+  # User trash
+  "/.local/share/Trash",
+  # General cache dirs
+  "/.cache",
+]
