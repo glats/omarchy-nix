@@ -12,14 +12,27 @@
     };
 
     Service = {
-      Type = "simple";
+      Type = "oneshot";
       ExecStart = "${config.home.homeDirectory}/.local/share/omarchy/bin/omarchy-battery-monitor";
-      Restart = "on-failure";
-      RestartSec = 10;
     };
 
     Install = {
       WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
+  systemd.user.timers.omarchy-battery-monitor = {
+    Unit = {
+      Description = "Omarchy Battery Monitor Timer";
+    };
+
+    Timer = {
+      OnUnitActiveSec = "30s";
+      Unit = "omarchy-battery-monitor.service";
+    };
+
+    Install = {
+      WantedBy = ["timers.target"];
     };
   };
 }
