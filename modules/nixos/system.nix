@@ -194,6 +194,38 @@ in
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     let
       greeterScript = pkgs.writeShellScript "greetd-regreet-start" ''
+        # ── Phase 1: monitor selection ──────────────────────────────
+        FOCUS='${cfg.greeter.focusMonitor}'
+
+        if [ -n "$FOCUS" ]; then
+          # Wait for Hyprland to enumerate monitors (10 × 100ms).
+          for _ in $(seq 1 10); do
+            ${pkgs.hyprland}/bin/hyprctl monitors -j 2>/dev/null \
+              | ${pkgs.jq}/bin/jq -e 'length > 0' >/dev/null 2>&1 && break
+            sleep 0.1
+          done
+
+          # Match the target monitor by description substring.
+          TARGET_MON=$(${pkgs.hyprland}/bin/hyprctl monitors all -j 2>/dev/null \
+            | ${pkgs.jq}/bin/jq -r --arg d "$FOCUS" \
+              '.[] | select((.description // "") | contains($d)) | .name' \
+            | head -1)
+
+          if [ -n "$TARGET_MON" ] && [ "$TARGET_MON" != "null" ]; then
+            # Disable every external monitor except the target.
+            for m in $(${pkgs.hyprland}/bin/hyprctl monitors all -j 2>/dev/null \
+              | ${pkgs.jq}/bin/jq -r '.[].name'); do
+              case "$m" in
+                eDP-*) ;;
+                "$TARGET_MON") ;;
+                *) ${pkgs.hyprland}/bin/hyprctl keyword monitor "$m,disable" >/dev/null 2>&1 ;;
+              esac
+            done
+            ${pkgs.hyprland}/bin/hyprctl dispatch focusmonitor "$TARGET_MON" >/dev/null 2>&1
+          fi
+        fi
+
+        # ── Phase 2: internal panel disable ─────────────────────────
         for s in /sys/class/drm/card*-*/status; do
           case "$s" in *-eDP-*) continue;; esac
           read -r st < "$s" 2>/dev/null
@@ -202,6 +234,8 @@ in
             break
           fi
         done
+
+        # ── Phase 3: launch greeter ─────────────────────────────────
         ${pkgs.regreet}/bin/regreet
         ${pkgs.hyprland}/bin/hyprctl dispatch exit
       '';
