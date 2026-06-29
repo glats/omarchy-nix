@@ -1,4 +1,4 @@
-{ ... }: {
+{ pkgs, ... }: {
   services.hypridle = {
     enable = true;
     settings = {
@@ -23,7 +23,13 @@
           on-timeout = "hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on && brightnessctl -r";
         }
-      ];
-    };
+    ];
   };
+
+  # Clear stale screensaver-off flag when hypridle starts.
+  # The toggle script creates this flag but it persists across reboots;
+  # if hypridle restarts with the flag present, the screensaver never launches.
+  systemd.user.services.hypridle.Service.ExecStartPre = [
+    "${pkgs.coreutils}/bin/rm -f %h/.local/state/omarchy/toggles/screensaver-off"
+  ];
 }
