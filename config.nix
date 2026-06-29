@@ -346,6 +346,35 @@ lib: {
             default = { };
             description = "Cursor configuration for the greeter Hyprland session.";
           };
+
+          wayvnc = lib.mkOption {
+            type = lib.types.submodule {
+              options = {
+                enable = lib.mkOption {
+                  type = lib.types.bool;
+                  default = false;
+                  description = "Enable wayvnc in the greeter Hyprland session (pre-login VNC).";
+                };
+                address = lib.mkOption {
+                  type = lib.types.str;
+                  default = "0.0.0.0";
+                  description = "Address wayvnc binds to inside the greeter session.";
+                };
+                port = lib.mkOption {
+                  type = lib.types.port;
+                  default = 5900;
+                  description = "TCP port for greeter wayvnc.";
+                };
+                enable_pam = lib.mkOption {
+                  type = lib.types.bool;
+                  default = true;
+                  description = "Enable PAM authentication for greeter wayvnc (validates VNC credentials against the host's PAM stack).";
+                };
+              };
+            };
+            default = { };
+            description = "wayvnc configuration for the greeter Hyprland session (pre-login VNC).";
+          };
         };
       };
       default = { };
