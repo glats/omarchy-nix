@@ -9,6 +9,18 @@ let
   cfg = config.omarchy;
   packages = import ../packages.nix { inherit pkgs config lib; };
 
+  # wayvnc config file for the greeter session. Built lazily — only
+  # realized when omarchy.greeter.wayvnc.enable = true pulls it into
+  # the tmpfiles rule below. Content is key=value per line, the format
+  # wayvnc expects.
+  wayvncConfigFile = pkgs.writeText "wayvnc-greeter-config" (
+    lib.concatStringsSep "\n" [
+      "address=${cfg.greeter.wayvnc.address}"
+      "port=${toString cfg.greeter.wayvnc.port}"
+      "enable_pam=${if cfg.greeter.wayvnc.enable_pam then "true" else "false"}"
+    ]
+  );
+
   elephantPkg = inputs.elephant.packages.${pkgs.stdenv.hostPlatform.system}.elephant;
 
   providersPkg = inputs.elephant.packages.${pkgs.stdenv.hostPlatform.system}.elephant-providers;
@@ -50,9 +62,20 @@ let
   };
 in
 {
-  # Create /bin/bash symlink for Omarchy script compatibility
+  # Create /bin/bash symlink for Omarchy script compatibility.
+  # When greeter wayvnc is enabled, also deploy the wayvnc config
+  # file (and its parent directories) into the greeter user's home so
+  # the greeter Hyprland session can launch wayvnc with the configured
+  # address/port/PAM settings. The `+` prefix on the `f` rule tells
+  # systemd-tmpfiles to copy the contents of the source derivation
+  # into the target file, preserving newlines in the wayvnc config.
   systemd.tmpfiles.rules = [
     "L+ /bin/bash - - - - ${pkgs.bash}/bin/bash"
+  ]
+  ++ lib.optionals cfg.greeter.wayvnc.enable [
+    "d /var/lib/greeter/.config 0750 greeter greeter - -"
+    "d /var/lib/greeter/.config/wayvnc 0750 greeter greeter - -"
+    "f /var/lib/greeter/.config/wayvnc/config 0640 greeter greeter - + ${wayvncConfigFile}"
   ];
 
   security.rtkit.enable = true;
@@ -182,8 +205,9 @@ in
         ${pkgs.regreet}/bin/regreet
         ${pkgs.hyprland}/bin/hyprctl dispatch exit
       '';
-      monitorBlock = lib.optionalString (cfg.greeter.monitors != [ ])
-        (lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors);
+      monitorBlock = lib.optionalString (cfg.greeter.monitors != [ ]) (
+        lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors
+      );
       cursorEnv = lib.optionalString (cfg.greeter.cursor.theme != "") ''
         env = XCURSOR_THEME,${cfg.greeter.cursor.theme}
         env = HYPRCURSOR_THEME,${cfg.greeter.cursor.theme}
@@ -196,9 +220,14 @@ in
             kb_options = ${cfg.greeter.keyboard.options}
         }
       '';
+      # wayvnc must launch BEFORE greetd-regreet-start so that the
+      # backgrounded VNC server is already listening when regreet comes
+      # up. Both are exec-once (run once at Hyprland startup); wayvnc
+      # is backgrounded with `&` so a slow start cannot block regreet.
+      wayvncExec = lib.optionalString cfg.greeter.wayvnc.enable "exec-once = ${pkgs.wayvnc}/bin/wayvnc ${cfg.greeter.wayvnc.address} ${toString cfg.greeter.wayvnc.port} &\n";
     in
     ''
-      ${monitorBlock}${cursorEnv}exec-once = ${greeterScript}
+      ${monitorBlock}${cursorEnv}${wayvncExec}exec-once = ${greeterScript}
       ${inputBlock}
       misc {
           disable_hyprland_logo = true
