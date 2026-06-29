@@ -170,10 +170,10 @@ in
   # Alt+Shift toggle works at the password prompt.
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     let
-      monitorBlock = lib.optionalString (cfg.greeter.primaryMonitor != "") ''
-        monitor = ${cfg.greeter.primaryMonitor}, preferred, auto, 1
-        monitor = , disable
-      '';
+      monitorBlock = lib.optionalString (cfg.greeter.monitors != [ ]) (
+        "monitor = eDP-1,disable\n"
+        + lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors
+      );
       cursorEnv = lib.optionalString (cfg.greeter.cursor.theme != "") ''
         env = XCURSOR_THEME,${cfg.greeter.cursor.theme}
         env = HYPRCURSOR_THEME,${cfg.greeter.cursor.theme}
