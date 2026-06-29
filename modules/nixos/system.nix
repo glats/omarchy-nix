@@ -171,8 +171,10 @@ in
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     let
       monitorLines = lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors;
-      primaryWorkspace = lib.optionalString (cfg.greeter.monitors != [ ])
-        "workspace = 1, monitor:${lib.head (lib.splitString "," (builtins.elemAt cfg.greeter.monitors 0))}\n";
+      primaryWorkspace = lib.optionalString (cfg.greeter.monitors != [ ]) ''
+        workspace = 1, monitor:${lib.head (lib.splitString "," (builtins.elemAt cfg.greeter.monitors 0))}
+        windowrulev2 = monitor ${lib.head (lib.splitString "," (builtins.elemAt cfg.greeter.monitors 0))}, class:^(regreet)$
+      '';
       inputBlock = lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
         input {
             kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
