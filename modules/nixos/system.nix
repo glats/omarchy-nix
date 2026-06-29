@@ -171,6 +171,9 @@ in
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     ''
       monitor = eDP-1,disable
+    ''
+    + lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors
+    + ''
       exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
     ''
     + lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''

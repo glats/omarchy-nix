@@ -308,8 +308,20 @@ lib: {
                   type = lib.types.str;
                   default = "";
                   description = "XKB options (layout toggle, compose key, etc.) for the greeter Hyprland session. Passed to Hyprland's `kb_options`. Leave empty to let the host set its own.";
-                };
-              };
+          };
+
+          monitors = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+            description = ''
+              Monitor lines for the greeter Hyprland session.
+              Each entry is a full `monitor =` spec. The first active
+              monitor in this list hosts the login prompt. When empty,
+              Hyprland auto-detects all outputs.
+            '';
+            example = [ "desc:Lenovo G24-10...,1920x1080@60,0x0,1" ];
+          };
+        };
             };
             default = { };
             description = "Keyboard configuration for the greeter Hyprland session. Only used when type = 'regreet'.";
