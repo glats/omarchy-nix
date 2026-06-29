@@ -175,7 +175,7 @@
   "custom/language": {
     "exec": "~/.local/share/omarchy/bin/kb-layout.sh",
     "interval": 5,
-    "on-click": "~/.local/share/omarchy/bin/kb-toggle.sh",
+    "on-click": "$HOME/.local/share/omarchy/bin/kb-toggle.sh",
     "format": "{} ",
     "tooltip": true
   },
