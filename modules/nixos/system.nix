@@ -169,18 +169,18 @@ in
   # and XKB options come from `omarchy.greeter.keyboard.*` so the user's
   # Alt+Shift toggle works at the password prompt.
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
+    let
+      monitorLines = lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors;
+      inputBlock = lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
+        input {
+            kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
+            kb_options = ${cfg.greeter.keyboard.options}
+        }
+      '';
+    in
     ''
-    + lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors
-    + ''
-      exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
-    ''
-    + lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
-      input {
-          kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
-          kb_options = ${cfg.greeter.keyboard.options}
-      }
-    ''
-    + ''
+      ${monitorLines}exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
+      ${inputBlock}
       misc {
           disable_hyprland_logo = true
           disable_splash_rendering = true
