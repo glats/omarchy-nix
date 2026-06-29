@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: {
+{ pkgs, ... }: {
   services.hypridle = {
     enable = true;
     settings = {
@@ -30,13 +30,7 @@
   # Clear stale screensaver-off flag when hypridle starts.
   # The toggle script creates this flag but it persists across reboots;
   # if hypridle restarts with the flag present, the screensaver never launches.
-  systemd.user.services.hypridle.Service = {
-    ExecStartPre = [
-      "${pkgs.coreutils}/bin/rm -f %h/.local/state/omarchy/toggles/screensaver-off"
-    ];
-    # Home Manager's hypridle module sets Restart=always, which defeats the
-    # toggle script: systemctl stop is followed by an auto-restart 10s later.
-    # on-failure still restarts on crashes but respects manual stops.
-    Restart = lib.mkForce "on-failure";
-  };
+  systemd.user.services.hypridle.Service.ExecStartPre = [
+    "${pkgs.coreutils}/bin/rm -f %h/.local/state/omarchy/toggles/screensaver-off"
+  ];
 }
