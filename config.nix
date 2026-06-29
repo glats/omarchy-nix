@@ -319,13 +319,18 @@ lib: {
           monitors = lib.mkOption {
             type = lib.types.listOf lib.types.str;
             default = [ ];
+            description = "Monitor lines (deprecated — use primaryMonitor instead)";
+          };
+
+          primaryMonitor = lib.mkOption {
+            type = lib.types.str;
+            default = "";
             description = ''
-              Monitor lines for the greeter Hyprland session.
-              Each entry is a full `monitor =` spec. The first active
-              monitor in this list hosts the login prompt. When empty,
-              Hyprland auto-detects all outputs.
+              Port name of the primary greeter monitor (e.g. "DP-4", "eDP-1").
+              When set, only this monitor is used — all others are disabled.
+              This is the community-standard pattern for ReGreet + Hyprland.
+              Leave empty to let Hyprland auto-detect all monitors.
             '';
-            example = [ "desc:Lenovo G24-10...,1920x1080@60,0x0,1" ];
           };
 
           cursor = lib.mkOption {
