@@ -1,8 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.omarchy;
-in {
+in
+{
   config = lib.mkIf (cfg ? fido2_auth && cfg.fido2_auth.enable) {
     # Enable FIDO2/WebAuthn support
     security.pam.u2f = {
@@ -16,7 +22,7 @@ in {
     # Required packages for FIDO2 support
     environment.systemPackages = with pkgs; [
       libfido2
-      pamu2fcfg  # Tool for mapping FIDO2 devices
+      pamu2fcfg # Tool for mapping FIDO2 devices
       yubikey-manager
       yubikey-personalization
     ];

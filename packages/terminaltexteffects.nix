@@ -18,13 +18,13 @@ python3Packages.buildPythonApplication rec {
     hatchling
   ];
 
-  pythonImportsCheck = ["terminaltexteffects"];
+  pythonImportsCheck = [ "terminaltexteffects" ];
 
   meta = with lib; {
     description = "A terminal visual effects engine";
     homepage = "https://github.com/ChrisBuilds/terminaltexteffects";
     license = licenses.mit;
-    maintainers = [];
+    maintainers = [ ];
     mainProgram = "tte";
   };
 }

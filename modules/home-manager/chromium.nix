@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   # Chromium browser configuration
   # Flags are applied via XDG config file for Chromium/Chrome/Brave compatibility
 
@@ -32,7 +33,7 @@
     };
     browser = {
       theme = {
-        color_scheme = 2;  # Dark mode
+        color_scheme = 2; # Dark mode
         user_color = 2;
       };
     };

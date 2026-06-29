@@ -2,9 +2,11 @@
   config,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
-in {
+in
+{
   programs.alacritty = {
     enable = true;
     settings = {

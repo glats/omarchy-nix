@@ -1,9 +1,11 @@
-inputs: {
+inputs:
+{
   config,
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
   palette = config.colorScheme.palette;
   convert = inputs.nix-colors.lib.conversions.hexToRGBString;
@@ -12,7 +14,8 @@ inputs: {
   foregroundRgb = "rgb(${convert ", " palette.base05})";
   foregroundMutedRgb = "rgb(${convert ", " palette.base04})";
   checkColorRgba = "rgba(${convert ", " palette.base0A}, 1.0)";
-in {
+in
+{
   programs.hyprlock = {
     enable = true;
     settings = {

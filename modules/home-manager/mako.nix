@@ -2,9 +2,11 @@
   config,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
-in {
+in
+{
   # Enable mako service
   services.mako.enable = true;
 
@@ -12,5 +14,6 @@ in {
   home.file.".local/share/omarchy/default/mako/core.ini".source = ../../default/mako/core.ini;
 
   # Mako config reads from symlinked theme directory
-  xdg.configFile."mako/config".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/omarchy/current/theme/mako.ini";
+  xdg.configFile."mako/config".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/omarchy/current/theme/mako.ini";
 }

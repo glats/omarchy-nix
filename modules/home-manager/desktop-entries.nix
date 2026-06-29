@@ -3,10 +3,13 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
-  browserDesktop = if cfg.browser == "brave" then "brave-browser.desktop" else "chromium-browser.desktop";
-in {
+  browserDesktop =
+    if cfg.browser == "brave" then "brave-browser.desktop" else "chromium-browser.desktop";
+in
+{
   # Custom desktop entries for applications
   # Provides proper MIME associations and Wayland support
 
@@ -18,7 +21,10 @@ in {
       icon = "imv";
       type = "Application";
       terminal = false;
-      categories = ["Graphics" "Viewer"];
+      categories = [
+        "Graphics"
+        "Viewer"
+      ];
       mimeType = [
         "image/png"
         "image/jpeg"
@@ -42,18 +48,46 @@ in {
       icon = "mpv";
       type = "Application";
       terminal = false;
-      categories = ["AudioVideo" "Audio" "Video" "Player" "TV"];
+      categories = [
+        "AudioVideo"
+        "Audio"
+        "Video"
+        "Player"
+        "TV"
+      ];
       mimeType = [
         # Audio formats
-        "audio/aac" "audio/x-aac" "audio/mp3" "audio/x-mp3" "audio/mpeg"
-        "audio/ogg" "audio/flac" "audio/wav" "audio/x-wav" "audio/opus"
-        "audio/webm" "audio/mp4" "audio/x-m4a" "application/x-extension-m4a"
+        "audio/aac"
+        "audio/x-aac"
+        "audio/mp3"
+        "audio/x-mp3"
+        "audio/mpeg"
+        "audio/ogg"
+        "audio/flac"
+        "audio/wav"
+        "audio/x-wav"
+        "audio/opus"
+        "audio/webm"
+        "audio/mp4"
+        "audio/x-m4a"
+        "application/x-extension-m4a"
         # Video formats
-        "video/mp4" "video/x-matroska" "video/mkv" "video/webm"
-        "video/mpeg" "video/x-msvideo" "video/avi" "video/quicktime"
-        "video/x-flv" "video/ogg" "video/3gp" "video/3gpp"
+        "video/mp4"
+        "video/x-matroska"
+        "video/mkv"
+        "video/webm"
+        "video/mpeg"
+        "video/x-msvideo"
+        "video/avi"
+        "video/quicktime"
+        "video/x-flv"
+        "video/ogg"
+        "video/3gp"
+        "video/3gpp"
         # Playlists
-        "application/x-mpegurl" "audio/x-mpegurl" "audio/mpegurl"
+        "application/x-mpegurl"
+        "audio/x-mpegurl"
+        "audio/mpegurl"
       ];
     };
 
@@ -64,8 +98,14 @@ in {
       exec = "typora --enable-wayland-ime %U";
       icon = "typora";
       type = "Application";
-      categories = ["Office" "WordProcessor"];
-      mimeType = ["text/markdown" "text/x-markdown"];
+      categories = [
+        "Office"
+        "WordProcessor"
+      ];
+      mimeType = [
+        "text/markdown"
+        "text/x-markdown"
+      ];
     };
   };
 

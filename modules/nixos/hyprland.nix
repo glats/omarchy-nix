@@ -1,9 +1,11 @@
-inputs: {
+inputs:
+{
   config,
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
 
   # Custom desktop file that uses start-hyprland wrapper
@@ -18,27 +20,29 @@ inputs: {
     # greetd/tuigreet (XDG Desktop Entry Spec: DesktopNames key).
     desktopNames = [ "Hyprland" ];
   };
-in {
+in
+{
   programs.hyprland = {
     enable = true;
     # package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    portalPackage =
+      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     withUWSM = lib.mkDefault true;
   };
 
   # Override the auto-generated desktop file with our fixed version
   environment.systemPackages = lib.mkIf cfg.seamless_boot.enable [
-    (pkgs.runCommand "hyprland-uwsm-override" {} ''
-      mkdir -p $out/share/wayland-sessions
-      cat > $out/share/wayland-sessions/hyprland-uwsm.desktop <<EOF
-[Desktop Entry]
-Name=Hyprland (UWSM)
-Comment=Hyprland compositor managed by UWSM
-Exec=${pkgs.uwsm}/bin/uwsm start -F -- start-hyprland
-Type=Application
-DesktopNames=Hyprland
-EOF
+    (pkgs.runCommand "hyprland-uwsm-override" { } ''
+            mkdir -p $out/share/wayland-sessions
+            cat > $out/share/wayland-sessions/hyprland-uwsm.desktop <<EOF
+      [Desktop Entry]
+      Name=Hyprland (UWSM)
+      Comment=Hyprland compositor managed by UWSM
+      Exec=${pkgs.uwsm}/bin/uwsm start -F -- start-hyprland
+      Type=Application
+      DesktopNames=Hyprland
+      EOF
     '')
   ];
 
@@ -64,7 +68,10 @@ EOF
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     config.common.default = "*";
     config.hyprland = {
-      default = lib.mkDefault [ "hyprland" "gtk" ];
+      default = lib.mkDefault [
+        "hyprland"
+        "gtk"
+      ];
       "org.freedesktop.impl.portal.Settings" = lib.mkDefault [ "gtk" ];
       # Enable InputCapture portal for screen sharing applications like Deskflow
       "org.freedesktop.impl.portal.InputCapture" = [ "hyprland" ];

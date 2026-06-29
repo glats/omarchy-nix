@@ -3,9 +3,11 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
-in {
+in
+{
   programs.zellij = {
     enable = lib.mkDefault true;
 
@@ -23,6 +25,5 @@ in {
 
   # Load theme from runtime config (allows dynamic theme switching)
   xdg.configFile."zellij/themes/omarchy.kdl".source =
-    config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/.config/omarchy/current/theme/zellij.kdl";
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/omarchy/current/theme/zellij.kdl";
 }

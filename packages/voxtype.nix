@@ -1,13 +1,14 @@
-{ lib
-, stdenv
-, fetchurl
-, autoPatchelfHook
-, makeWrapper
-, alsa-lib
-, vulkan-loader
-, wtype
-, wl-clipboard
-, rocmPackages
+{
+  lib,
+  stdenv,
+  fetchurl,
+  autoPatchelfHook,
+  makeWrapper,
+  alsa-lib,
+  vulkan-loader,
+  wtype,
+  wl-clipboard,
+  rocmPackages,
 }:
 
 stdenv.mkDerivation rec {
@@ -72,25 +73,55 @@ stdenv.mkDerivation rec {
 
     # Wrap main binary (onnx-rocm) with ROCm support
     wrapProgram $out/bin/voxtype \
-      --prefix PATH : ${lib.makeBinPath [ wtype wl-clipboard ]} \
-      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ vulkan-loader rocmPackages.clr ]} \
+      --prefix PATH : ${
+        lib.makeBinPath [
+          wtype
+          wl-clipboard
+        ]
+      } \
+      --prefix LD_LIBRARY_PATH : ${
+        lib.makeLibraryPath [
+          vulkan-loader
+          rocmPackages.clr
+        ]
+      } \
       --prefix XDG_DATA_DIRS : /run/opengl-driver/share
 
     # Wrap CPU fallback binary
     wrapProgram $out/lib/voxtype/voxtype-cpu \
-      --prefix PATH : ${lib.makeBinPath [ wtype wl-clipboard ]}
+      --prefix PATH : ${
+        lib.makeBinPath [
+          wtype
+          wl-clipboard
+        ]
+      }
 
     # Wrap Vulkan binary
     wrapProgram $out/lib/voxtype/voxtype-vulkan \
-      --prefix PATH : ${lib.makeBinPath [ wtype wl-clipboard ]} \
+      --prefix PATH : ${
+        lib.makeBinPath [
+          wtype
+          wl-clipboard
+        ]
+      } \
       --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ vulkan-loader ]} \
       --prefix XDG_DATA_DIRS : /run/opengl-driver/share \
       --set GGML_VK_VISIBLE_DEVICES 0
 
     # Wrap onnx-rocm binary in lib
     wrapProgram $out/lib/voxtype/voxtype-onnx-rocm \
-      --prefix PATH : ${lib.makeBinPath [ wtype wl-clipboard ]} \
-      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ vulkan-loader rocmPackages.clr ]} \
+      --prefix PATH : ${
+        lib.makeBinPath [
+          wtype
+          wl-clipboard
+        ]
+      } \
+      --prefix LD_LIBRARY_PATH : ${
+        lib.makeLibraryPath [
+          vulkan-loader
+          rocmPackages.clr
+        ]
+      } \
       --prefix XDG_DATA_DIRS : /run/opengl-driver/share
 
     runHook postInstall

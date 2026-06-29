@@ -3,9 +3,11 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
-in {
+in
+{
   config = lib.mkIf cfg.nvidia.enable {
     # Enable NVIDIA drivers
     services.xserver.videoDrivers = [ "nvidia" ];
@@ -35,10 +37,10 @@ in {
     hardware.opengl = {
       enable = true;
       driSupport = true;
-      driSupport32Bit = true;  # For 32-bit applications
+      driSupport32Bit = true; # For 32-bit applications
 
       extraPackages = with pkgs; [
-        nvidia-vaapi-driver  # VA-API support for video acceleration
+        nvidia-vaapi-driver # VA-API support for video acceleration
       ];
     };
 
@@ -59,7 +61,7 @@ in {
 
     # Additional packages for NVIDIA
     environment.systemPackages = with pkgs; [
-      nvtop  # NVIDIA GPU monitor (like htop for GPU)
+      nvtop # NVIDIA GPU monitor (like htop for GPU)
     ];
   };
 }

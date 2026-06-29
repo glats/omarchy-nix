@@ -1,31 +1,39 @@
-inputs: {
+inputs:
+{
   config,
   pkgs,
   lib,
   ...
-}: let
-  packages = import ../packages.nix {inherit pkgs config lib;};
+}:
+let
+  packages = import ../packages.nix { inherit pkgs config lib; };
 
   themes = import ../themes.nix;
   customSchemes = import ../custom-base16-schemes.nix;
 
   # Light theme detection logic
   lightModeFilePath = "${config.home.homeDirectory}/.config/omarchy/theme/light.mode";
-  isLightModeEnabled = config.omarchy.light_theme_detection.enable && builtins.pathExists lightModeFilePath;
+  isLightModeEnabled =
+    config.omarchy.light_theme_detection.enable && builtins.pathExists lightModeFilePath;
 
   # Determine effective theme
   effectiveTheme =
-    if isLightModeEnabled && builtins.hasAttr config.omarchy.theme config.omarchy.light_theme_detection.light_theme_mappings
-    then config.omarchy.light_theme_detection.light_theme_mappings.${config.omarchy.theme}
-    else config.omarchy.theme;
+    if
+      isLightModeEnabled
+      && builtins.hasAttr config.omarchy.theme config.omarchy.light_theme_detection.light_theme_mappings
+    then
+      config.omarchy.light_theme_detection.light_theme_mappings.${config.omarchy.theme}
+    else
+      config.omarchy.theme;
 
   selectedTheme = themes.${effectiveTheme};
 
   # Get color scheme - use custom scheme if marked, otherwise use nix-colors
   selectedColorScheme =
-    if selectedTheme ? custom-scheme && selectedTheme.custom-scheme
-    then customSchemes.${selectedTheme.base16-theme}
-    else inputs.nix-colors.colorSchemes.${selectedTheme.base16-theme};
+    if selectedTheme ? custom-scheme && selectedTheme.custom-scheme then
+      customSchemes.${selectedTheme.base16-theme}
+    else
+      inputs.nix-colors.colorSchemes.${selectedTheme.base16-theme};
 
   # Build an executable copy of the bin scripts — the git source files are not
   # tracked with the executable bit (100644), and Nix store deployments preserve
@@ -41,7 +49,8 @@ inputs: {
       chmod -R +x $out
     '';
   };
-in {
+in
+{
   imports = [
     (import ./hyprland.nix inputs)
     (import ./hyprlock.nix inputs)
@@ -169,7 +178,7 @@ in {
   '';
 
   # Copy logo.txt to screensaver.txt on first use (user-customizable)
-  home.activation.copyScreensaverTxt = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.copyScreensaverTxt = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ ! -f "$HOME/.config/omarchy/branding/screensaver.txt" ]; then
       mkdir -p "$HOME/.config/omarchy/branding"
       cp "$HOME/.local/share/omarchy/logo.txt" "$HOME/.config/omarchy/branding/screensaver.txt"
@@ -177,7 +186,7 @@ in {
   '';
 
   # Seed Hyprland toggle state dir (omarchy install/config/omarchy-toggles.sh equivalent)
-  home.activation.seedHyprToggles = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.seedHyprToggles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     mkdir -p "$HOME/.local/state/omarchy/toggles/hypr"
     if [ ! -f "$HOME/.local/state/omarchy/toggles/hypr/flags.conf" ]; then
       cp "$HOME/.local/share/omarchy/default/hypr/toggles/flags.conf" \
@@ -193,7 +202,7 @@ in {
   # Using -f (match command line) instead of -x (match comm), because Nix's
   # wrapper binary has comm `.walker-wrapped` rather than `walker`.
   # `.elephant-wrapped` is the matching token for elephant's wrapper.
-  home.activation.restartWalkerStack = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.restartWalkerStack = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     pkill -9 -f "walker.*--dmenu" 2>/dev/null || true
     pkill -f "walker --gapplication-service" 2>/dev/null || true
     pkill -9 -f "\.elephant-wrapped" 2>/dev/null || true

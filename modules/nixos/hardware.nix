@@ -3,9 +3,11 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   hw = config.omarchy.hardware;
-in {
+in
+{
   config = lib.mkMerge [
     # ASUS ExpertBook B9406 (Panther Lake / Xe3) display + touchpad fixes
     # Mirrors install/config/hardware/asus/fix-asus-ptl-b9406-{display,touchpad}.sh

@@ -3,15 +3,17 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
-  voxtype = pkgs.callPackage ../../packages/voxtype.nix {};
-in {
+  voxtype = pkgs.callPackage ../../packages/voxtype.nix { };
+in
+{
   config = lib.mkIf cfg.voxtype.enable {
     # Deploy default voxtype config only if user doesn't have one yet
     # Voxtype's Home Manager module merges user settings into defaults,
     # so we avoid overwriting user customizations on rebuild
-    home.activation.voxtype-config = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    home.activation.voxtype-config = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       VOXTYPE_CONFIG="$HOME/.config/voxtype/config.toml"
       if [[ ! -f "$VOXTYPE_CONFIG" ]]; then
         $DRY_RUN_CMD mkdir -p "$(dirname "$VOXTYPE_CONFIG")"
@@ -20,7 +22,7 @@ in {
     '';
 
     # Enable GPU in voxtype if Vulkan is available
-    home.activation.voxtype-gpu = lib.hm.dag.entryAfter ["writeBoundary" "voxtype-config"] ''
+    home.activation.voxtype-gpu = lib.hm.dag.entryAfter [ "writeBoundary" "voxtype-config" ] ''
       if command -v vulkaninfo &>/dev/null && vulkaninfo --summary &>/dev/null 2>&1; then
         $DRY_RUN_CMD ${voxtype}/bin/voxtype setup gpu --enable 2>/dev/null || true
       fi
@@ -30,7 +32,7 @@ in {
     systemd.user.services.voxtype = {
       Unit = {
         Description = "Voxtype voice dictation daemon";
-        After = ["graphical-session.target"];
+        After = [ "graphical-session.target" ];
       };
 
       Service = {
@@ -42,7 +44,7 @@ in {
       };
 
       Install = {
-        WantedBy = ["graphical-session.target"];
+        WantedBy = [ "graphical-session.target" ];
       };
     };
   };

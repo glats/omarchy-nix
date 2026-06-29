@@ -3,9 +3,11 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
-in {
+in
+{
   # SwayOSD configuration for volume/brightness OSD
   home.file.".config/swayosd/config.toml".text = ''
     [server]

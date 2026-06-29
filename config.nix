@@ -101,16 +101,16 @@ lib: {
           };
         };
       };
-      default = {};
+      default = { };
       description = "Per-component font family configuration";
     };
     vscode_settings = lib.mkOption {
       type = lib.types.attrs;
-      default = {};
+      default = { };
     };
     monitors = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [];
+      default = [ ];
     };
     scale = lib.mkOption {
       type = lib.types.int;
@@ -118,12 +118,19 @@ lib: {
       description = "Display scale factor (1 for 1x displays, 2 for 2x displays)";
     };
     browser = lib.mkOption {
-      type = lib.types.enum ["chromium" "brave"];
+      type = lib.types.enum [
+        "chromium"
+        "brave"
+      ];
       default = "chromium";
       description = "Browser to use for web browsing";
     };
     terminal = lib.mkOption {
-      type = lib.types.enum ["ghostty" "alacritty" "kitty"];
+      type = lib.types.enum [
+        "ghostty"
+        "alacritty"
+        "kitty"
+      ];
       default = "ghostty";
       description = "Terminal emulator to use";
     };
@@ -137,65 +144,67 @@ lib: {
           };
         };
       };
-      default = {};
+      default = { };
       description = "Office suite configuration";
     };
     gaming = lib.mkOption {
-      type = lib.types.submodule ({config, ...}: {
-        options = {
-          enable = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Enable gaming support umbrella (Steam, controllers, GPU 32-bit libs default-on; opt-in for Heroic/Lutris/Moonlight/Retroarch/Xbox Cloud/GeForce Now).";
+      type = lib.types.submodule (
+        { config, ... }: {
+          options = {
+            enable = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Enable gaming support umbrella (Steam, controllers, GPU 32-bit libs default-on; opt-in for Heroic/Lutris/Moonlight/Retroarch/Xbox Cloud/GeForce Now).";
+            };
+            steam.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = config.enable;
+              description = "Install Steam with Proton-GE, Remote Play, and dedicated server firewall openings.";
+            };
+            heroic.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Install Heroic Games Launcher (Epic / GOG / Amazon Prime).";
+            };
+            lutris.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Install Lutris with Wine/Winetricks (Battle.net is added through Lutris install scripts at runtime).";
+            };
+            moonlight.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Install Moonlight game streaming client.";
+            };
+            retroarch.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Install RetroArch with assets and a default selection of libretro cores.";
+            };
+            xboxCloud.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Install Xbox Cloud Gaming web app launcher.";
+            };
+            geforceNow.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Install GeForce NOW web app launcher.";
+            };
+            xboxControllers.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = config.enable;
+              description = "Enable Xbox controller support (xone, xpadneo, udev rules).";
+            };
+            gpuLib32.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = config.enable;
+              description = "Enable 32-bit graphics libraries (required by many games).";
+            };
           };
-          steam.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = config.enable;
-            description = "Install Steam with Proton-GE, Remote Play, and dedicated server firewall openings.";
-          };
-          heroic.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Install Heroic Games Launcher (Epic / GOG / Amazon Prime).";
-          };
-          lutris.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Install Lutris with Wine/Winetricks (Battle.net is added through Lutris install scripts at runtime).";
-          };
-          moonlight.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Install Moonlight game streaming client.";
-          };
-          retroarch.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Install RetroArch with assets and a default selection of libretro cores.";
-          };
-          xboxCloud.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Install Xbox Cloud Gaming web app launcher.";
-          };
-          geforceNow.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Install GeForce NOW web app launcher.";
-          };
-          xboxControllers.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = config.enable;
-            description = "Enable Xbox controller support (xone, xpadneo, udev rules).";
-          };
-          gpuLib32.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = config.enable;
-            description = "Enable 32-bit graphics libraries (required by many games).";
-          };
-        };
-      });
-      default = {};
+        }
+      );
+      default = { };
       description = "Gaming configuration";
     };
     nvidia = lib.mkOption {
@@ -208,7 +217,7 @@ lib: {
           };
         };
       };
-      default = {};
+      default = { };
       description = "NVIDIA GPU configuration";
     };
     quick_app_bindings = lib.mkOption {
@@ -268,14 +277,17 @@ lib: {
           };
         };
       };
-      default = {};
+      default = { };
       description = "Seamless boot configuration options";
     };
     greeter = lib.mkOption {
       type = lib.types.submodule {
         options = {
           type = lib.mkOption {
-            type = lib.types.enum [ "tuigreet" "regreet" ];
+            type = lib.types.enum [
+              "tuigreet"
+              "regreet"
+            ];
             default = "tuigreet";
             description = ''
               Greeter backend for greetd when seamless_boot is disabled.
@@ -289,22 +301,22 @@ lib: {
               options = {
                 layouts = lib.mkOption {
                   type = lib.types.listOf lib.types.str;
-                   default = [ ];
-                   description = "Keyboard layouts (XKB names) exposed at the greeter screen. Comma-joined into Hyprland's `kb_layout`. Leave empty to let the host set its own.";
+                  default = [ ];
+                  description = "Keyboard layouts (XKB names) exposed at the greeter screen. Comma-joined into Hyprland's `kb_layout`. Leave empty to let the host set its own.";
                 };
                 options = lib.mkOption {
                   type = lib.types.str;
-                   default = "";
-                   description = "XKB options (layout toggle, compose key, etc.) for the greeter Hyprland session. Passed to Hyprland's `kb_options`. Leave empty to let the host set its own.";
+                  default = "";
+                  description = "XKB options (layout toggle, compose key, etc.) for the greeter Hyprland session. Passed to Hyprland's `kb_options`. Leave empty to let the host set its own.";
                 };
               };
             };
-            default = {};
+            default = { };
             description = "Keyboard configuration for the greeter Hyprland session. Only used when type = 'regreet'.";
           };
         };
       };
-      default = {};
+      default = { };
       description = "Greeter configuration for the greetd login screen";
     };
     light_theme_detection = lib.mkOption {
@@ -331,7 +343,7 @@ lib: {
           };
         };
       };
-      default = {};
+      default = { };
       description = "Light theme detection configuration";
     };
     fido2_auth = lib.mkOption {
@@ -354,7 +366,7 @@ lib: {
           };
         };
       };
-      default = {};
+      default = { };
       description = "FIDO2 and biometric authentication configuration";
     };
     firewall = lib.mkOption {
@@ -382,17 +394,17 @@ lib: {
           };
           allowed_tcp_ports = lib.mkOption {
             type = lib.types.listOf lib.types.port;
-            default = [];
+            default = [ ];
             description = "Additional TCP ports to allow";
           };
           allowed_udp_ports = lib.mkOption {
             type = lib.types.listOf lib.types.port;
-            default = [];
+            default = [ ];
             description = "Additional UDP ports to allow";
           };
         };
       };
-      default = {};
+      default = { };
       description = "Firewall and security configuration";
     };
     voxtype = lib.mkOption {
@@ -405,14 +417,17 @@ lib: {
           };
         };
       };
-      default = {};
+      default = { };
       description = "Voxtype voice dictation configuration";
     };
     wifi = lib.mkOption {
       type = lib.types.submodule {
         options = {
           backend = lib.mkOption {
-            type = lib.types.enum ["nm-iwd" "standalone-iwd"];
+            type = lib.types.enum [
+              "nm-iwd"
+              "standalone-iwd"
+            ];
             default = "nm-iwd";
             description = ''
               WiFi management backend mode:
@@ -431,7 +446,7 @@ lib: {
           };
         };
       };
-      default = {};
+      default = { };
       description = "WiFi management configuration";
     };
     hardware = lib.mkOption {
@@ -454,7 +469,7 @@ lib: {
           };
         };
       };
-      default = {};
+      default = { };
       description = "Hardware-specific workarounds (off by default; enable per machine).";
     };
     wayvnc = lib.mkOption {
@@ -477,15 +492,18 @@ lib: {
           };
         };
       };
-      default = {};
+      default = { };
       description = "wayvnc VNC server configuration for Wayland compositors";
     };
     xdg = lib.mkOption {
       type = lib.types.submodule {
         options = {
           portal = {
-            enable = lib.mkEnableOption "xdg-desktop-portal-gtk UseIn patch and Settings routing for Hyprland"
-              // {default = true;};
+            enable =
+              lib.mkEnableOption "xdg-desktop-portal-gtk UseIn patch and Settings routing for Hyprland"
+              // {
+                default = true;
+              };
             usein = lib.mkOption {
               type = lib.types.listOf lib.types.str;
               default = [ "hyprland" ];
@@ -494,12 +512,15 @@ lib: {
                 via nixpkgs.overlays + substituteInPlace. Required for libadwaita
                 apps to read Settings (color-scheme) on non-GNOME compositors.
               '';
-              example = [ "hyprland" "sway" ];
+              example = [
+                "hyprland"
+                "sway"
+              ];
             };
           };
         };
       };
-      default = {};
+      default = { };
       description = "XDG desktop portal integration options";
     };
   };

@@ -3,9 +3,11 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
-in {
+in
+{
   virtualisation.containers.enable = true;
   virtualisation = {
     docker.enable = true;
@@ -19,6 +21,6 @@ in {
 
   # Add user to docker group for permission access (like omarchy does with usermod -aG docker ${USER})
   users.users.${cfg.username} = lib.mkIf config.virtualisation.docker.enable {
-    extraGroups = ["docker"];
+    extraGroups = [ "docker" ];
   };
 }

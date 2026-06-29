@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   wayland.windowManager.hyprland.extraConfig = ''
     # Hyprland 0.53+ windowrule syntax
     windowrule = suppress_event maximize, match:class .*

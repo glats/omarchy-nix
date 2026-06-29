@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
   homeDir = config.home.homeDirectory;
   # OSD client for the currently focused monitor
@@ -301,7 +302,8 @@
     # Calculator
     ", XF86Calculator, Calculator, exec, gnome-calculator"
   ];
-in {
+in
+{
   wayland.windowManager.hyprland = {
     extraConfig = ''
       # Render order matters: `bindd` is "last wins" in Hyprland, so `mainBindings`

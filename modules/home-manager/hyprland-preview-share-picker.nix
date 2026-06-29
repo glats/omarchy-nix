@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   # Hyprland Preview Share Picker configuration
   # Provides a visual screen share selector with window/output/region options
 

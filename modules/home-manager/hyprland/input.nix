@@ -3,7 +3,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   wayland.windowManager.hyprland.settings = {
     # https://wiki.hyprland.org/Configuring/Variables/#input
     # Each key uses lib.mkDefault so user path-based overrides merge cleanly.

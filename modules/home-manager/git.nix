@@ -1,6 +1,8 @@
-{config, ...}: let
+{ config, ... }:
+let
   cfg = config.omarchy;
-in {
+in
+{
   programs.git = {
     enable = true;
     settings = {

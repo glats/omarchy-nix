@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   # Hyprsunset - Blue light filter with manual toggle support
   # Default configuration disables automatic tinting
   # Use omarchy-toggle-nightlight to toggle nightlight mode
@@ -27,8 +28,8 @@
   systemd.user.services.hyprsunset = {
     Unit = {
       Description = "Hyprsunset - Blue light filter for Hyprland";
-      PartOf = ["graphical-session.target"];
-      After = ["graphical-session.target"];
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
     };
 
     Service = {
@@ -38,7 +39,7 @@
     };
 
     Install = {
-      WantedBy = ["graphical-session.target"];
+      WantedBy = [ "graphical-session.target" ];
     };
   };
 }

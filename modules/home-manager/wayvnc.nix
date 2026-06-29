@@ -12,9 +12,16 @@
 #   - survives Hyprland restarts
 #   - restarts automatically on failure
 #   - is inspectable via `systemctl --user status wayvnc`
-{ config, lib, pkgs, ... }:
-let cfg = config.omarchy.wayvnc;
-in {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.omarchy.wayvnc;
+in
+{
   config = lib.mkIf cfg.enable {
     # Config file generated declaratively by Nix.
     # wayvnc reads this at startup (default location: ~/.config/wayvnc/config).

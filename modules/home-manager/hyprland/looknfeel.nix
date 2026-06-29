@@ -2,14 +2,19 @@
   config,
   pkgs,
   ...
-}: let
-  hexToRgba = hex: alpha: let
-  in "rgba(${hex}${alpha})";
+}:
+let
+  hexToRgba =
+    hex: alpha:
+    let
+    in
+    "rgba(${hex}${alpha})";
 
   inactiveBorder = hexToRgba config.colorScheme.palette.base01 "aa";
   activeBorder = hexToRgba config.colorScheme.palette.base0D "aa";
   shadowColor = hexToRgba config.colorScheme.palette.base00 "ee";
-in {
+in
+{
   wayland.windowManager.hyprland.extraConfig = ''
     group {
       col.border_active = ${activeBorder}

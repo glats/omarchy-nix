@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   # xdg-desktop-portal-hyprland configuration
   # Enables screen sharing with preview picker
 

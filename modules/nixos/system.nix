@@ -1,15 +1,15 @@
-inputs: {
+inputs:
+{
   config,
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
-  packages = import ../packages.nix {inherit pkgs config lib;};
+  packages = import ../packages.nix { inherit pkgs config lib; };
 
   elephantPkg = inputs.elephant.packages.${pkgs.stdenv.hostPlatform.system}.elephant;
-
-
 
   providersPkg = inputs.elephant.packages.${pkgs.stdenv.hostPlatform.system}.elephant-providers;
 
@@ -33,17 +33,23 @@ inputs: {
 
     postFixup = ''
       wrapProgram $out/bin/elephant \
-        --prefix PATH : ${pkgs.lib.makeBinPath (with pkgs; [
-          bash  # Required for executing desktop entries (sh command)
-          wl-clipboard
-          libqalculate
-          imagemagick
-          bluez
-        ])} \
+        --prefix PATH : ${
+          pkgs.lib.makeBinPath (
+            with pkgs;
+            [
+              bash # Required for executing desktop entries (sh command)
+              wl-clipboard
+              libqalculate
+              imagemagick
+              bluez
+            ]
+          )
+        } \
         --suffix PATH : /run/current-system/sw/bin:/etc/profiles/per-user/${cfg.username}/bin:/run/wrappers/bin
     '';
   };
-in {
+in
+{
   # Create /bin/bash symlink for Omarchy script compatibility
   systemd.tmpfiles.rules = [
     "L+ /bin/bash - - - - ${pkgs.bash}/bin/bash"
@@ -52,7 +58,7 @@ in {
   security.rtkit.enable = true;
 
   # PAM configuration for hyprlock (required for authentication)
-  security.pam.services.hyprlock = {};
+  security.pam.services.hyprlock = { };
 
   services.pulseaudio.enable = false;
   services.pipewire = {
@@ -100,41 +106,41 @@ in {
   # kernel command line at the bootloader to skip greetd entirely and
   # fall back to a VT login prompt. The console keymap (omarchy.tty) is
   # preserved untouched, so the VT login still has a working keyboard.
-  services.greetd = let
-    # Use seamless_boot.username if set, otherwise fall back to main username
-    loginUser = if cfg.seamless_boot.username != null
-                then cfg.seamless_boot.username
-                else cfg.username;
-  in {
-    enable = true;
-    settings = lib.mkMerge [
-      # Seamless auto-login when enabled
-      (lib.mkIf cfg.seamless_boot.enable {
-        initial_session = {
-          command = "${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop";
-          user = loginUser;
-        };
-        default_session = {
-          command = "${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop";
-          user = loginUser;
-        };
-      })
-      # TUI greeter (default when seamless_boot is disabled)
-      (lib.mkIf (!cfg.seamless_boot.enable && cfg.greeter.type == "tuigreet") {
-        default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd '${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop'";
-      })
-      # ReGreet (GTK) inside a minimal Hyprland session — exposes the
-      # keyboard layout toggle at the login screen. `lib.mkForce` overrides
-      # the `cage` default_session that `programs.regreet.enable` would
-      # otherwise install via its own `lib.mkDefault`.
-      (lib.mkIf (!cfg.seamless_boot.enable && cfg.greeter.type == "regreet") {
-        default_session = {
-          command = lib.mkForce "${pkgs.dbus}/bin/dbus-run-session ${pkgs.hyprland}/bin/Hyprland -c /etc/greetd/hyprland.conf";
-          user = "greeter";
-        };
-      })
-    ];
-  };
+  services.greetd =
+    let
+      # Use seamless_boot.username if set, otherwise fall back to main username
+      loginUser = if cfg.seamless_boot.username != null then cfg.seamless_boot.username else cfg.username;
+    in
+    {
+      enable = true;
+      settings = lib.mkMerge [
+        # Seamless auto-login when enabled
+        (lib.mkIf cfg.seamless_boot.enable {
+          initial_session = {
+            command = "${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop";
+            user = loginUser;
+          };
+          default_session = {
+            command = "${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop";
+            user = loginUser;
+          };
+        })
+        # TUI greeter (default when seamless_boot is disabled)
+        (lib.mkIf (!cfg.seamless_boot.enable && cfg.greeter.type == "tuigreet") {
+          default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd '${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop'";
+        })
+        # ReGreet (GTK) inside a minimal Hyprland session — exposes the
+        # keyboard layout toggle at the login screen. `lib.mkForce` overrides
+        # the `cage` default_session that `programs.regreet.enable` would
+        # otherwise install via its own `lib.mkDefault`.
+        (lib.mkIf (!cfg.seamless_boot.enable && cfg.greeter.type == "regreet") {
+          default_session = {
+            command = lib.mkForce "${pkgs.dbus}/bin/dbus-run-session ${pkgs.hyprland}/bin/Hyprland -c /etc/greetd/hyprland.conf";
+            user = "greeter";
+          };
+        })
+      ];
+    };
 
   # ReGreet: enable the module (package, GTK theme hooks, config helpers).
   # Its built-in cage default_session is overridden above via `lib.mkForce`.
@@ -165,12 +171,14 @@ in {
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     ''
       exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
-    '' + lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
+    ''
+    + lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
       input {
           kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
           kb_options = ${cfg.greeter.keyboard.options}
       }
-    '' + ''
+    ''
+    + ''
       misc {
           disable_hyprland_logo = true
           disable_splash_rendering = true
@@ -181,7 +189,10 @@ in {
 
   # Binary cache for Walker (speeds up builds)
   nix.settings = {
-    extra-substituters = ["https://walker.cachix.org" "https://walker-git.cachix.org"];
+    extra-substituters = [
+      "https://walker.cachix.org"
+      "https://walker-git.cachix.org"
+    ];
     extra-trusted-public-keys = [
       "walker.cachix.org-1:fG8q+uAaMqhsMxWjwvk0IMb4mFPFLqHjuvfwQxE4oJM="
       "walker-git.cachix.org-1:vmC0ocfPWh0S/vRAQGtChuiZBTAe4wiKDeyyXM0/7pM="
@@ -224,9 +235,9 @@ in {
   # Elephant systemd service
   systemd.user.services.elephant = {
     description = "Elephant launcher backend";
-    wantedBy = ["graphical-session.target"];
-    after = ["graphical-session.target"];
-    partOf = ["graphical-session.target"];
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "simple";
       ExecStart = "${elephantCombined}/bin/elephant";
@@ -266,7 +277,6 @@ in {
   # Credential storage for apps (gnome-keyring)
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.greetd.enableGnomeKeyring = true;
-
 
   # Networking
   services.resolved.enable = true;

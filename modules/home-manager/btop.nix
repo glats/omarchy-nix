@@ -3,12 +3,14 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   # Fall back to "glats" when imported standalone (no omarchy config)
-  cfg = config.omarchy or {};
+  cfg = config.omarchy or { };
   themeName = if cfg ? theme && cfg.theme != null then cfg.theme else "glats";
   palette = config.colorScheme.palette;
-in {
+in
+{
   home.file = {
     ".config/btop/themes/${themeName}.theme" = {
       text = ''

@@ -3,11 +3,12 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   systemd.user.services.omarchy-battery-monitor = {
     Unit = {
       Description = "Omarchy Battery Monitor";
-      After = ["graphical-session.target"];
+      After = [ "graphical-session.target" ];
     };
 
     Service = {
@@ -18,7 +19,7 @@
     };
 
     Install = {
-      WantedBy = ["graphical-session.target"];
+      WantedBy = [ "graphical-session.target" ];
     };
   };
 }

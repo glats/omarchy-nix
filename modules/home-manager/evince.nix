@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   # Evince PDF viewer - same as omarchy
-  home.packages = [pkgs.evince];
+  home.packages = [ pkgs.evince ];
 }

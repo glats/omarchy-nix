@@ -13,35 +13,42 @@
     };
   };
 
-  outputs = { nixpkgs, omarchy-nix, home-manager, ... }: {
-    nixosConfigurations.your-hostname = nixpkgs.lib.nixosSystem {
-      modules = [
-        omarchy-nix.nixosModules.default
-        home-manager.nixosModules.home-manager
-        {
-          # Configure omarchy with seamless boot
-          omarchy = {
-            username = "your-username";
-            full_name = "Your Name";
-            email_address = "your.email@example.com";
-            theme = "tokyo-night";
+  outputs =
+    {
+      nixpkgs,
+      omarchy-nix,
+      home-manager,
+      ...
+    }:
+    {
+      nixosConfigurations.your-hostname = nixpkgs.lib.nixosSystem {
+        modules = [
+          omarchy-nix.nixosModules.default
+          home-manager.nixosModules.home-manager
+          {
+            # Configure omarchy with seamless boot
+            omarchy = {
+              username = "your-username";
+              full_name = "Your Name";
+              email_address = "your.email@example.com";
+              theme = "tokyo-night";
 
-            # NEW: Seamless boot configuration
-            seamless_boot = {
-              enable = true;
-              # username defaults to omarchy.username (can override if needed)
-              plymouth_theme = "omarchy";  # Default
-              silent_boot = true;          # Default
+              # NEW: Seamless boot configuration
+              seamless_boot = {
+                enable = true;
+                # username defaults to omarchy.username (can override if needed)
+                plymouth_theme = "omarchy"; # Default
+                silent_boot = true; # Default
+              };
             };
-          };
-          
-          home-manager = {
-            users.your-username = {
-              imports = [ omarchy-nix.homeManagerModules.default ];
+
+            home-manager = {
+              users.your-username = {
+                imports = [ omarchy-nix.homeManagerModules.default ];
+              };
             };
-          };
-        }
-      ];
+          }
+        ];
+      };
     };
-  };
 }

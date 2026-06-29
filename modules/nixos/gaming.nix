@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
   gaming = cfg.gaming;
   # Anything below requires the umbrella `gaming.enable` to be on. Per-component
@@ -11,7 +12,8 @@
   # xboxControllers, gpuLib32) and `false` for the opt-in extras
   # (heroic, lutris, moonlight, retroarch, xboxCloud, geforceNow).
   any = gaming.enable;
-in {
+in
+{
   config = lib.mkMerge [
     # GameMode + mangohud + steam-run are useful whenever any gaming feature is
     # enabled (small, generally-applicable utilities).

@@ -1,20 +1,25 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   lightModeFilePath = "${config.home.homeDirectory}/.config/omarchy/theme/light.mode";
   themeMonitorScript = pkgs.writeShellScript "omarchy-theme-monitor" ''
     set -euo pipefail
-    
+
     # Ensure the theme directory exists
     mkdir -p "${config.home.homeDirectory}/.config/omarchy/theme"
-    
+
     # Function to log theme changes
     trigger_theme_switch() {
       echo "Theme mode change detected. Run 'home-manager switch' to apply theme changes."
       # Note: Automatic home-manager switching is disabled to avoid infinite loops
       # Users should manually run 'home-manager switch' after toggling theme mode
     }
-    
+
     # Watch for file creation/deletion events
     ${pkgs.inotify-tools}/bin/inotifywait -m -e create,delete,moved_to,moved_from \
       "${config.home.homeDirectory}/.config/omarchy/theme" \
@@ -26,14 +31,15 @@ let
         fi
     done
   '';
-in {
+in
+{
   config = lib.mkIf config.omarchy.light_theme_detection.enable {
     # Create the theme directory structure
     home.file.".config/omarchy/theme/.keep".text = "";
-    
+
     # Install theme monitoring utilities
     home.packages = with pkgs; [ inotify-tools ];
-    
+
     # Systemd user service for theme monitoring
     systemd.user.services.omarchy-theme-monitor = {
       Unit = {
@@ -46,10 +52,12 @@ in {
         Restart = "always";
         RestartSec = "5";
         Environment = [
-          "PATH=${lib.makeBinPath [
-            pkgs.coreutils
-            pkgs.inotify-tools
-          ]}"
+          "PATH=${
+            lib.makeBinPath [
+              pkgs.coreutils
+              pkgs.inotify-tools
+            ]
+          }"
         ];
       };
       Install = {

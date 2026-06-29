@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   systemd.user.services.omarchy-post-boot = {
     Unit = {
       Description = "Run omarchy post-boot hooks";

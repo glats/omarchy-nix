@@ -3,10 +3,12 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.omarchy;
-  voxtype = pkgs.callPackage ../../packages/voxtype.nix {};
-in {
+  voxtype = pkgs.callPackage ../../packages/voxtype.nix { };
+in
+{
   config = lib.mkIf cfg.voxtype.enable {
     # Create /usr/lib/voxtype symlink for voxtype's hardcoded path
     # voxtype expects to find voxtype-vulkan in /usr/lib/voxtype/

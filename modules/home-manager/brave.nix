@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   # Brave browser configuration
   # Brave uses Chromium flags via brave-flags.conf
 
