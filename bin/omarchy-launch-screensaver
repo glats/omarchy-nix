@@ -27,11 +27,17 @@ focused=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true).name')
 terminal=$(xdg-terminal-exec --print-id)
 
 for m in $(hyprctl monitors -j | jq -r '.[] | .name'); do
-  # Dispatch to this monitor's active workspace instead of using focusmonitor.
-  # In Hyprland each workspace ID is globally unique and belongs to a specific
-  # monitor, so workspace dispatch focuses the correct monitor automatically.
+  # Focus the monitor via its active workspace.
   ws=$(hyprctl monitors -j | jq -r ".[] | select(.name==\"$m\") | .activeWorkspace.id")
   hyprctl dispatch workspace "$ws"
+
+  # Move the cursor to this monitor's center.  focusmonitor / workspace
+  # dispatch alone doesn't move the cursor, and the float-on window rule
+  # places new floating windows at the cursor position.  Without this,
+  # all terminals land on whichever monitor the cursor happens to be on.
+  x=$(hyprctl monitors -j | jq -r ".[] | select(.name==\"$m\") | (.x + .width/2) | floor")
+  y=$(hyprctl monitors -j | jq -r ".[] | select(.name==\"$m\") | (.y + .height/2) | floor")
+  hyprctl dispatch movecursor "$x" "$y"
 
   case $terminal in
   *Alacritty*)
