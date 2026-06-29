@@ -27,10 +27,11 @@ focused=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true).name')
 terminal=$(xdg-terminal-exec --print-id)
 
 for m in $(hyprctl monitors -j | jq -r '.[] | .name'); do
-  if ! hyprctl dispatch focusmonitor "$m" >/dev/null 2>&1; then
-    notify-send -u low "⚠  Could not focus $m — skipping"
-    continue
-  fi
+  # Dispatch to this monitor's active workspace instead of using focusmonitor.
+  # In Hyprland each workspace ID is globally unique and belongs to a specific
+  # monitor, so workspace dispatch focuses the correct monitor automatically.
+  ws=$(hyprctl monitors -j | jq -r ".[] | select(.name==\"$m\") | .activeWorkspace.id")
+  hyprctl dispatch workspace "$ws"
 
   case $terminal in
   *Alacritty*)
@@ -58,11 +59,6 @@ for m in $(hyprctl monitors -j | jq -r '.[] | .name'); do
     continue
     ;;
   esac
-
-  # Give Hyprland time to map the terminal window and apply the fullscreen
-  # window rule BEFORE we move focus to the next monitor.  2 seconds is
-  # generous; typical ghostty cold-start is 200-800ms on this hardware.
-  sleep 2
 done
 
 hyprctl dispatch focusmonitor "$focused"
