@@ -181,6 +181,7 @@ in
         env = XCURSOR_SIZE,${toString cfg.greeter.cursor.size}
         env = HYPRCURSOR_SIZE,${toString cfg.greeter.cursor.size}
       '';
+      inputBlock = lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
         input {
             kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
             kb_options = ${cfg.greeter.keyboard.options}
