@@ -281,7 +281,7 @@ let
   ];
 
   # Lid switch bindings (bindl - works when locked, no description form)
-  switchBindings = [
+  switchBindings = lib.optionals cfg.hyprland.lidSwitch.enable [
     ", switch:on:Lid Switch, exec, omarchy-hw-external-monitors && omarchy-hyprland-monitor-internal off"
     ", switch:off:Lid Switch, exec, omarchy-hyprland-monitor-internal on"
   ];

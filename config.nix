@@ -439,6 +439,27 @@ lib: {
       default = { };
       description = "Firewall and security configuration";
     };
+    hyprland = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          lidSwitch = lib.mkOption {
+            type = lib.types.submodule {
+              options = {
+                enable = lib.mkOption {
+                  type = lib.types.bool;
+                  default = true;
+                  description = "Whether omarchy manages lid-switch monitor toggles. Disable if you provide custom lid-switch bindings.";
+                };
+              };
+            };
+            default = { };
+            description = "Lid-switch monitor toggle configuration";
+          };
+        };
+      };
+      default = { };
+      description = "Hyprland-specific configuration";
+    };
     voxtype = lib.mkOption {
       type = lib.types.submodule {
         options = {
