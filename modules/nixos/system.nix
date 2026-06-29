@@ -140,6 +140,13 @@ in {
   # Its built-in cage default_session is overridden above via `lib.mkForce`.
   programs.regreet.enable = lib.mkIf (cfg.greeter.type == "regreet") true;
 
+  # Dark theme matching Nautilus (libadwaita) look.
+  programs.regreet.settings = lib.mkIf (cfg.greeter.type == "regreet") {
+    GTK = {
+      application_prefer_dark_theme = true;
+    };
+  };
+
   # ReGreet refuses to run as root; create a dedicated non-root user.
   # `video` membership is required for Hyprland KMS access in the greeter
   # session.
