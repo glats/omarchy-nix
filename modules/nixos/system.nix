@@ -171,6 +171,11 @@ in
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     let
       monitorLines = lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors;
+      primaryWorkspace = lib.optionalString (cfg.greeter.monitors != [ ])
+        let
+          raw = builtins.elemAt cfg.greeter.monitors 0;
+          desc = builtins.elemAt (lib.splitString "," raw) 0;
+        in "workspace = 1, monitor:${desc}\n";
       inputBlock = lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
         input {
             kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
@@ -180,7 +185,7 @@ in
     in
     ''
       monitor = eDP-1,disable
-      ${monitorLines}exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
+      ${monitorLines}${primaryWorkspace}exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
       ${inputBlock}
       misc {
           disable_hyprland_logo = true
