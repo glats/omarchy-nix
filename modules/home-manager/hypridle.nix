@@ -23,7 +23,8 @@
           on-timeout = "hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on && brightnessctl -r";
         }
-    ];
+      ];
+    };
   };
 
   # Clear stale screensaver-off flag when hypridle starts.
