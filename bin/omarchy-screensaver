@@ -2,10 +2,6 @@
 
 # omarchy:summary=Run the Omarchy screensaver using random effects from TTE.
 
-screensaver_in_focus() {
-  hyprctl activewindow -j | jq -e '.class == "org.omarchy.screensaver"' >/dev/null 2>&1
-}
-
 tte_pid=""
 
 exit_screensaver() {
@@ -37,7 +33,7 @@ while true; do
   tte_pid=$!
 
   while kill -0 "$tte_pid" 2>/dev/null; do
-    if read -n1 -t 1 || ! screensaver_in_focus; then
+    if read -n1 -t 1; then
       exit_screensaver
     fi
   done

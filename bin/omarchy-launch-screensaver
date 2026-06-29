@@ -27,38 +27,22 @@ focused=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true).name')
 terminal=$(xdg-terminal-exec --print-id)
 
 for m in $(hyprctl monitors -j | jq -r '.[] | .name'); do
-  # Focus the monitor via its active workspace.
+  # Assign the terminal directly to this monitor's active workspace using
+  # Hyprland's exec-rule syntax.  The [workspace N silent] rule pins the
+  # new window to workspace N without changing focus, so the wayland
+  # surface lands on the correct monitor regardless of when ghostty
+  # actually maps it — no sleep / poll / movecursor needed.
   ws=$(hyprctl monitors -j | jq -r ".[] | select(.name==\"$m\") | .activeWorkspace.id")
-  hyprctl dispatch workspace "$ws"
-
-  # Move the cursor to this monitor's center.  focusmonitor / workspace
-  # dispatch alone doesn't move the cursor, and the float-on window rule
-  # places new floating windows at the cursor position.  Without this,
-  # all terminals land on whichever monitor the cursor happens to be on.
-  x=$(hyprctl monitors -j | jq -r ".[] | select(.name==\"$m\") | (.x + .width/2) | floor")
-  y=$(hyprctl monitors -j | jq -r ".[] | select(.name==\"$m\") | (.y + .height/2) | floor")
-  hyprctl dispatch movecursor "$x" "$y"
 
   case $terminal in
   *Alacritty*)
-    hyprctl dispatch exec -- \
-      alacritty --class=org.omarchy.screensaver \
-      --config-file ~/.config/omarchy/screensaver/alacritty.toml \
-      -e omarchy-screensaver
+    hyprctl dispatch "exec [workspace $ws silent] alacritty --class=org.omarchy.screensaver --config-file ~/.config/omarchy/screensaver/alacritty.toml -e omarchy-screensaver"
     ;;
   *ghostty*)
-    hyprctl dispatch exec -- \
-      ghostty --class=org.omarchy.screensaver \
-      --config-file=~/.config/omarchy/screensaver/ghostty \
-      --font-size=18 \
-      -e omarchy-screensaver
+    hyprctl dispatch "exec [workspace $ws silent] ghostty --class=org.omarchy.screensaver --config-file=~/.config/omarchy/screensaver/ghostty --font-size=18 -e omarchy-screensaver"
     ;;
   *kitty*)
-    hyprctl dispatch exec -- \
-      kitty --class=org.omarchy.screensaver \
-      --override font_size=18 \
-      --override window_padding_width=0 \
-      -e omarchy-screensaver
+    hyprctl dispatch "exec [workspace $ws silent] kitty --class=org.omarchy.screensaver --override font_size=18 --override window_padding_width=0 -e omarchy-screensaver"
     ;;
   *)
     notify-send -u low "✋  Screensaver only runs in Alacritty, Ghostty, or Kitty"
