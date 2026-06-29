@@ -15,6 +15,7 @@
       "uwsm-app -- swayosd-server"
       "omarchy-powerprofiles-init"
       "uwsm-app -- omarchy-hyprland-monitor-watch"
+      "uwsm-app -- walker --gapplication-service"
 
       # "dropbox-cli start"  # Uncomment to run Dropbox
     ];
