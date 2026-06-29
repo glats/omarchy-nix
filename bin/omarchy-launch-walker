@@ -15,7 +15,7 @@ fi
 
 # Walker daemon: -f matches command line so this check is reliable.
 if ! pgrep -f "walker --gapplication-service" > /dev/null; then
-  setsid uwsm-app -- env GSK_RENDERER=cairo walker --gapplication-service &
+  setsid uwsm-app -- walker --gapplication-service &
 fi
 
 exec walker --width 644 --maxheight 300 --minheight 300 "$@"
