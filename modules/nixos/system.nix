@@ -162,20 +162,22 @@ in {
   # Greeter Hyprland config: launch ReGreet, then exit. Keyboard layout
   # and XKB options come from `omarchy.greeter.keyboard.*` so the user's
   # Alt+Shift toggle works at the password prompt.
-  environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") ''
-    exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
-  '' + lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
-    input {
-        kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
-        kb_options = ${cfg.greeter.keyboard.options}
-    }
-  '' + ''
-    misc {
-        disable_hyprland_logo = true
-        disable_splash_rendering = true
-        disable_hyprland_guiutils_check = true
-    }
-  '';
+  environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
+    ''
+      exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
+    '' + lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
+      input {
+          kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
+          kb_options = ${cfg.greeter.keyboard.options}
+      }
+    '' + ''
+      misc {
+          disable_hyprland_logo = true
+          disable_splash_rendering = true
+          disable_hyprland_guiutils_check = true
+      }
+    ''
+  );
 
   # Binary cache for Walker (speeds up builds)
   nix.settings = {
