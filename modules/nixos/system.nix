@@ -170,6 +170,18 @@ in
   # Alt+Shift toggle works at the password prompt.
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     let
+      greeterScript = pkgs.writeShellScript "greetd-regreet-start" ''
+        for s in /sys/class/drm/card*-*/status; do
+          case "$s" in *-eDP-*) continue;; esac
+          read -r st < "$s" 2>/dev/null
+          if [ "$st" = connected ]; then
+            ${pkgs.hyprland}/bin/hyprctl keyword monitor eDP-1,disable
+            break
+          fi
+        done
+        ${pkgs.regreet}/bin/regreet
+        ${pkgs.hyprland}/bin/hyprctl dispatch exit
+      '';
       monitorBlock = lib.optionalString (cfg.greeter.monitors != [ ])
         (lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors);
       cursorEnv = lib.optionalString (cfg.greeter.cursor.theme != "") ''
@@ -186,15 +198,7 @@ in
       '';
     in
     ''
-      ${monitorBlock}${cursorEnv}exec-once = ${pkgs.bash}/bin/bash -c '
-        for s in /sys/class/drm/card*-*/status; do
-          case "$s" in *-eDP-*) continue;; esac
-          read -r st < "$s" 2>/dev/null
-          [ "$st" = connected ] && { ${pkgs.hyprland}/bin/hyprctl keyword monitor eDP-1,disable; break; }
-        done
-        ${pkgs.regreet}/bin/regreet
-        ${pkgs.hyprland}/bin/hyprctl dispatch exit
-      '
+      ${monitorBlock}${cursorEnv}exec-once = ${greeterScript}
       ${inputBlock}
       misc {
           disable_hyprland_logo = true
