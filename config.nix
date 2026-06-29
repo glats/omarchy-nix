@@ -327,6 +327,25 @@ lib: {
             '';
             example = [ "desc:Lenovo G24-10...,1920x1080@60,0x0,1" ];
           };
+
+          cursor = lib.mkOption {
+            type = lib.types.submodule {
+              options = {
+                theme = lib.mkOption {
+                  type = lib.types.str;
+                  default = "";
+                  description = "Cursor theme name for the greeter. Set via XCURSOR_THEME env var. Leave empty to use system default.";
+                };
+                size = lib.mkOption {
+                  type = lib.types.ints.positive;
+                  default = 24;
+                  description = "Cursor size for the greeter. Set via XCURSOR_SIZE + HYPRCURSOR_SIZE env vars.";
+                };
+              };
+            };
+            default = { };
+            description = "Cursor configuration for the greeter Hyprland session.";
+          };
         };
       };
       default = { };

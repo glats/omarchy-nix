@@ -175,7 +175,12 @@ in
         workspace = 1, monitor:${lib.head (lib.splitString "," (builtins.elemAt cfg.greeter.monitors 0))}
         windowrulev2 = monitor ${lib.head (lib.splitString "," (builtins.elemAt cfg.greeter.monitors 0))}, class:^(regreet)$
       '';
-      inputBlock = lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
+      cursorEnv = lib.optionalString (cfg.greeter.cursor.theme != "") ''
+        env = XCURSOR_THEME,${cfg.greeter.cursor.theme}
+        env = HYPRCURSOR_THEME,${cfg.greeter.cursor.theme}
+        env = XCURSOR_SIZE,${toString cfg.greeter.cursor.size}
+        env = HYPRCURSOR_SIZE,${toString cfg.greeter.cursor.size}
+      '';
         input {
             kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
             kb_options = ${cfg.greeter.keyboard.options}
@@ -184,7 +189,7 @@ in
     in
     ''
       monitor = eDP-1,disable
-      ${monitorLines}${primaryWorkspace}exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
+      ${monitorLines}${primaryWorkspace}${cursorEnv}exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
       ${inputBlock}
       misc {
           disable_hyprland_logo = true
