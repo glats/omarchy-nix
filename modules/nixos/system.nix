@@ -164,10 +164,12 @@ in {
   # Alt+Shift toggle works at the password prompt.
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") ''
     exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
+  '' + lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
     input {
         kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
         kb_options = ${cfg.greeter.keyboard.options}
     }
+  '' + ''
     misc {
         disable_hyprland_logo = true
         disable_splash_rendering = true

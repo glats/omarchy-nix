@@ -289,15 +289,13 @@ lib: {
               options = {
                 layouts = lib.mkOption {
                   type = lib.types.listOf lib.types.str;
-                  default = [ "es" "latam" ];
-                  description = "Keyboard layouts (XKB names) exposed at the greeter screen. Comma-joined into Hyprland's `kb_layout`.";
-                  example = [ "es" "latam" ];
+                   default = [ ];
+                   description = "Keyboard layouts (XKB names) exposed at the greeter screen. Comma-joined into Hyprland's `kb_layout`. Leave empty to let the host set its own.";
                 };
                 options = lib.mkOption {
                   type = lib.types.str;
-                  default = "grp:alt_shift_toggle,compose:caps";
-                  description = "XKB options (layout toggle, compose key, etc.) for the greeter Hyprland session. Passed to Hyprland's `kb_options`.";
-                  example = "grp:alt_shift_toggle";
+                   default = "";
+                   description = "XKB options (layout toggle, compose key, etc.) for the greeter Hyprland session. Passed to Hyprland's `kb_options`. Leave empty to let the host set its own.";
                 };
               };
             };
