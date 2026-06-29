@@ -186,7 +186,18 @@ Per-host overrides (fonts, hypridle timings, gtk theme) use `lib.mkForce` in `ho
 
 - **Validate**: `nix flake check`
 - **Version compare**: `.claude/commands/version-compare.md` — diffs this file against actual repo state
-- **Formatter**: `nixfmt` (RFC style) via consumer's `format-nix` script. This repo's `flake.nix` does not declare a formatter.
+
+## Formatter (CRITICAL — do NOT guess)
+
+**Formatter**: `nixfmt` (from `nixpkgs#nixfmt`). Declared in `flake.nix` as `formatter.*`.
+
+| ✅ Correct | ❌ Wrong |
+|-----------|---------|
+| `nix fmt -- <file>` (flake formatter) | `nixpkgs-fmt` |
+| `nixpkgs.legacyPackages.x86_64-linux.nixfmt` in flake | `nixfmt-rfc-style` (package name, not executable) |
+| `nixfmt` CLI directly | `nix shell nixpkgs#nixfmt-rfc-style -c nixfmt-rfc-style` |
+
+**Rule**: Always use `nix fmt -- <path>` for single files, or `find ... -name '*.nix' -not -path '*/.git/*' -print0 | xargs -0 nix fmt --` for bulk format. Never guess the formatter name.
 
 ## Design Decisions
 
