@@ -328,6 +328,24 @@ lib: {
             example = [ "desc:Lenovo G24-10...,1920x1080@60,0x0,1" ];
           };
 
+          focusMonitor = lib.mkOption {
+            type = lib.types.str;
+            default = "";
+            example = "LEN G24";
+            description = ''
+              Description substring of the monitor that should host the
+              greeter form when the host is docked.  The greeter startup
+              script matches this substring against the `description` field
+              of `hyprctl monitors -j` (using `jq contains`), disables all
+              other external outputs, and launches the greeter on the
+              single remaining monitor.
+
+              Leave empty (the default) to keep the current behaviour:
+              the greeter appears on the first external output, or on
+              eDP-1 when no externals are connected.
+            '';
+          };
+
           cursor = lib.mkOption {
             type = lib.types.submodule {
               options = {
