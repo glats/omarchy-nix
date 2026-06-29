@@ -175,7 +175,7 @@
   "custom/language": {
     "exec": "~/.local/share/omarchy/bin/kb-layout.sh",
     "interval": 2,
-    "signal": 12,
+    "exec-on-event": true,
     "on-click": "/home/glats/.local/share/omarchy/bin/kb-toggle.sh",
     "format": "{} ",
     "tooltip": true
