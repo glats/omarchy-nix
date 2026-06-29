@@ -80,6 +80,26 @@
               (import ./modules/home-manager/btop.nix)
             ];
           };
+
+        # Standalone fcitx5 module — IME packages + env + config + autostart
+        # without the full omarchy desktop (Hyprland, waybar, walker, etc.).
+        #
+        # The module reads `config.omarchy.fcitx5.enable`, so we declare
+        # the omarchy options here (mirroring what homeManagerModules.default
+        # does). Consumers set `omarchy.fcitx5.enable = true` to opt in.
+        fcitx5 =
+          {
+            config,
+            lib,
+            pkgs,
+            ...
+          }:
+          {
+            imports = [
+              (import ./modules/home-manager/fcitx5.nix)
+            ];
+            options.omarchy = (import ./config.nix lib).omarchyOptions;
+          };
       };
 
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt;

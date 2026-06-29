@@ -149,7 +149,8 @@ lib: {
     };
     gaming = lib.mkOption {
       type = lib.types.submodule (
-        { config, ... }: {
+        { config, ... }:
+        {
           options = {
             enable = lib.mkOption {
               type = lib.types.bool;
@@ -506,6 +507,19 @@ lib: {
       };
       default = { };
       description = "wayvnc VNC server configuration for Wayland compositors";
+    };
+    fcitx5 = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable fcitx5 input method with IME support for accented characters and multi-layout switching. Requires removing compose:caps from Hyprland input options.";
+          };
+        };
+      };
+      default = { };
+      description = "Fcitx5 input method configuration";
     };
     xdg = lib.mkOption {
       type = lib.types.submodule {

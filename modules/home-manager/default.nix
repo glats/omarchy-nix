@@ -86,6 +86,7 @@ in
     (import ./theme-generator.nix inputs)
     ./omarchy-post-boot.nix
     ./wayvnc.nix
+    ./fcitx5.nix
   ];
 
   home.file = {
