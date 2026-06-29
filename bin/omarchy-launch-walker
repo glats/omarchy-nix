@@ -18,4 +18,16 @@ if ! pgrep -f "walker --gapplication-service" > /dev/null; then
   setsid uwsm-app -- walker --gapplication-service &
 fi
 
+# Socket launch: for the default invocation (SUPER+SPACE, no flags),
+# bypass GTK4 process spawning entirely. The service already has
+# everything initialized — this is near-instant.
+if [ $# -eq 0 ]; then
+  SOCK="$XDG_RUNTIME_DIR/walker/walker.sock"
+  if [ -S "$SOCK" ]; then
+    exec python3 -c "import socket; socket.socket(socket.AF_UNIX).connect('$SOCK')"
+  fi
+  # Socket not ready (daemon still starting) — fall through.
+fi
+
+# Fallback: full process launch with flags (--dmenu, -m, etc.).
 exec walker --width 644 --maxheight 300 --minheight 300 "$@"
