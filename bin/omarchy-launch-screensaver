@@ -26,13 +26,7 @@ walker -q
 focused=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true).name')
 terminal=$(xdg-terminal-exec --print-id)
 
-# Count how many screensaver windows already exist (should be 0 — we check
-# with pgrep above — but being defensive costs nothing).
-count_before=$(hyprctl clients -j 2>/dev/null | jq \
-  '[.[] | select(.class == "org.omarchy.screensaver" and .mapped == true)] | length')
-
 for m in $(hyprctl monitors -j | jq -r '.[] | .name'); do
-  # Focus the target monitor BEFORE spawning, so the terminal lands here.
   if ! hyprctl dispatch focusmonitor "$m" >/dev/null 2>&1; then
     notify-send -u low "⚠  Could not focus $m — skipping"
     continue
@@ -65,19 +59,10 @@ for m in $(hyprctl monitors -j | jq -r '.[] | .name'); do
     ;;
   esac
 
-  # Wait for the NEW window to be mapped.  The window rule (fullscreen on,
-  # class org.omarchy.screensaver) fires at map time, so by blocking here
-  # until the window appears we guarantee the fullscreen lands on $m while
-  # it's still the focused monitor — no race with the next focusmonitor call.
-  for _ in $(seq 1 30); do
-    sleep 0.1
-    count_now=$(hyprctl clients -j 2>/dev/null | jq \
-      '[.[] | select(.class == "org.omarchy.screensaver" and .mapped == true)] | length')
-    if [[ "$count_now" -gt "$count_before" ]]; then
-      count_before=$count_now
-      break
-    fi
-  done
+  # Give Hyprland time to map the terminal window and apply the fullscreen
+  # window rule BEFORE we move focus to the next monitor.  2 seconds is
+  # generous; typical ghostty cold-start is 200-800ms on this hardware.
+  sleep 2
 done
 
 hyprctl dispatch focusmonitor "$focused"
