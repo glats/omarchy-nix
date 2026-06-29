@@ -186,7 +186,15 @@ in
       '';
     in
     ''
-      ${monitorBlock}${cursorEnv}exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
+      ${monitorBlock}${cursorEnv}exec-once = ${pkgs.bash}/bin/bash -c '
+        for s in /sys/class/drm/card*-*/status; do
+          case "$s" in *-eDP-*) continue;; esac
+          read -r st < "$s" 2>/dev/null
+          [ "$st" = connected ] && { ${pkgs.hyprland}/bin/hyprctl keyword monitor eDP-1,disable; break; }
+        done
+        ${pkgs.regreet}/bin/regreet
+        ${pkgs.hyprland}/bin/hyprctl dispatch exit
+      '
       ${inputBlock}
       misc {
           disable_hyprland_logo = true
