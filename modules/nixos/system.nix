@@ -171,10 +171,7 @@ in
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     let
       monitorLines = lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors;
-      primaryWorkspace = lib.optionalString (cfg.greeter.monitors != [ ]) ''
-        workspace = 1, monitor:${lib.head (lib.splitString "," (builtins.elemAt cfg.greeter.monitors 0))}
-        windowrule = match:class ^(regreet)$, monitor ${lib.head (lib.splitString "," (builtins.elemAt cfg.greeter.monitors 0))}
-      '';
+      primaryWorkspace = "";  # overridden by hardcoded DP-4 below for testing
       cursorEnv = lib.optionalString (cfg.greeter.cursor.theme != "") ''
         env = XCURSOR_THEME,${cfg.greeter.cursor.theme}
         env = HYPRCURSOR_THEME,${cfg.greeter.cursor.theme}
@@ -189,8 +186,9 @@ in
       '';
     in
     ''
-      monitor = eDP-1,disable
-      ${monitorLines}${primaryWorkspace}${cursorEnv}exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
+        monitor = eDP-1,disable
+      ${monitorLines}workspace = 1, monitor:DP-4
+      ${primaryWorkspace}${cursorEnv}exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
       ${inputBlock}
       misc {
           disable_hyprland_logo = true
