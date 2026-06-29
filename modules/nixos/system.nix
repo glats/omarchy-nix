@@ -173,7 +173,7 @@ in
       monitorLines = lib.concatMapStrings (m: "monitor = ${m}\n") cfg.greeter.monitors;
       primaryWorkspace = lib.optionalString (cfg.greeter.monitors != [ ]) ''
         workspace = 1, monitor:${lib.head (lib.splitString "," (builtins.elemAt cfg.greeter.monitors 0))}
-        windowrule = monitor ${lib.head (lib.splitString "," (builtins.elemAt cfg.greeter.monitors 0))}, class:^(regreet)$
+        windowrule = match:class:^(regreet)$, monitor ${lib.head (lib.splitString "," (builtins.elemAt cfg.greeter.monitors 0))}
       '';
       cursorEnv = lib.optionalString (cfg.greeter.cursor.theme != "") ''
         env = XCURSOR_THEME,${cfg.greeter.cursor.theme}
