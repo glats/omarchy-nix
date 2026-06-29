@@ -135,7 +135,7 @@ in
         # otherwise install via its own `lib.mkDefault`.
         (lib.mkIf (!cfg.seamless_boot.enable && cfg.greeter.type == "regreet") {
           default_session = {
-            command = lib.mkForce "${pkgs.dbus}/bin/dbus-run-session ${pkgs.hyprland}/bin/Hyprland -c /etc/greetd/hyprland.conf";
+            command = lib.mkForce "${pkgs.hyprland}/bin/start-hyprland -- --config /etc/greetd/hyprland.conf";
             user = "greeter";
           };
         })
