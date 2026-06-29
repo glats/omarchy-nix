@@ -314,6 +314,18 @@ lib: {
             default = { };
             description = "Keyboard configuration for the greeter Hyprland session. Only used when type = 'regreet'.";
           };
+
+          monitors = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+            description = ''
+              Monitor configuration lines for the greeter Hyprland session.
+              Each entry is a full `monitor = ...` line (e.g. `desc:Lenovo G24-10,1920x1080@60,0x0,1`).
+              Order matters — the first active monitor hosts the login prompt.
+              When empty, Hyprland auto-detects all connected outputs.
+            '';
+            example = [ "desc:Lenovo G24-10...,1920x1080@60,0x0,1" ];
+          };
         };
       };
       default = { };
