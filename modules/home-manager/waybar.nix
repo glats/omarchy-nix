@@ -1,14 +1,11 @@
-inputs:
-{
+inputs: {
   config,
   pkgs,
   lib,
   ...
-}:
-let
+}: let
   cfg = config.omarchy;
-in
-{
+in {
   home.file = {
     ".config/waybar/" = {
       source = ../../config/waybar;
@@ -17,13 +14,12 @@ in
   };
 
   # Waybar reads theme from symlinked theme directory
-  xdg.configFile."waybar/theme.css".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/omarchy/current/theme/waybar.css";
+  xdg.configFile."waybar/theme.css".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/omarchy/current/theme/waybar.css";
 
   # Font family — configurable per consumer via omarchy.fonts.waybar
   xdg.configFile."waybar/font.css".text = ''
     * {
-      font-family: ${cfg.fonts.waybar};
+      font-family: '${cfg.fonts.waybar}';
       font-size: 12px;
     }
   '';
