@@ -7,10 +7,19 @@ restart_services() {
     systemctl --user restart elephant.service
   fi
 
+  # Try systemd-managed walker first (uwsm app-* template)
   if systemctl --user is-enabled app-walker@autostart.service &>/dev/null; then
     systemctl --user restart app-walker@autostart.service
+    echo "Walker restarted via systemd"
+    return
+  fi
+
+  # Fallback: omarchy-nix runs walker as a detached process (setsid uwsm-app ...)
+  # Kill the existing daemon; omarchy-launch-walker will restart it on next use.
+  if pkill -f "walker --gapplication-service" 2>/dev/null; then
+    echo "Walker daemon killed — will restart on next SUPER+SPACE"
   else
-    echo -e "\e[31mUnable to restart Walker -- RESTART MANUALLY\e[0m"
+    echo "No running walker daemon found"
   fi
 }
 
