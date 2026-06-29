@@ -179,6 +179,7 @@ in
       '';
     in
     ''
+      monitor = eDP-1,disable
       ${monitorLines}exec-once = ${pkgs.regreet}/bin/regreet; ${pkgs.hyprland}/bin/hyprctl dispatch exit
       ${inputBlock}
       misc {
