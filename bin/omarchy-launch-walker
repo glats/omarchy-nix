@@ -24,7 +24,7 @@ fi
 if [ $# -eq 0 ]; then
   SOCK="$XDG_RUNTIME_DIR/walker/walker.sock"
   if [ -S "$SOCK" ]; then
-    exec python3 -c "import socket; socket.socket(socket.AF_UNIX).connect('$SOCK')"
+    exec nc -U "$SOCK"
   fi
   # Socket not ready (daemon still starting) — fall through.
 fi

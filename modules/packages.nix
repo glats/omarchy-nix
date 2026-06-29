@@ -71,6 +71,7 @@ in
       curl
       unzip
       wget
+      netcat-openbsd
       gnumake
 
       # TUIs
