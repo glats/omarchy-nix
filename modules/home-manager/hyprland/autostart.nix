@@ -11,7 +11,7 @@
       "uwsm-app -- swaybg -i ~/.config/omarchy/current/background -m fill"
       "systemctl --user start hyprpolkitagent"
       "wl-clip-persist --clipboard regular & clipse -listen"
-      "pkill -x waybar; uwsm-app -- waybar"
+      "pkill -x waybar; uwsm-app -- waybar 2>>$HOME/.cache/waybar-stderr.log"
       "uwsm-app -- swayosd-server"
       "omarchy-powerprofiles-init"
       "uwsm-app -- omarchy-hyprland-monitor-watch"
