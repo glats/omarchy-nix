@@ -23,6 +23,7 @@
   padding: 0 6px;
   margin: 0 1.5px;
   min-width: 9px;
+  position: relative;
 }
 
 #workspaces button.empty {
@@ -31,11 +32,15 @@
 
 #workspaces button.active {
   font-weight: bold;
-  border-bottom: 2px solid @theme_text_color;
 }
 
-#workspaces button.visible {
-  opacity: 1.0;
+#workspaces button.active::after {
+  content: "●";
+  font-size: 6px;
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 #cpu,
