@@ -21,11 +21,10 @@
 #
 # A symlink at `~/.config/omarchy/current/theme` points to the active theme.
 inputs:
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 let
   themes = import ../themes.nix;
@@ -405,9 +404,11 @@ let
     let
       sourceName = getThemeSource themeName;
       sourceDir = ../../config/themes/${sourceName};
-      existingFiles = lib.filter (
-        name: builtins.pathExists (sourceDir + "/${name}")
-      ) additionalStaticFiles;
+      existingFiles = lib.filter
+        (
+          name: builtins.pathExists (sourceDir + "/${name}")
+        )
+        additionalStaticFiles;
     in
     lib.genAttrs existingFiles (name: {
       source = sourceDir + "/${name}";
@@ -424,10 +425,12 @@ let
       entries = (mkGeneratedFiles themeName) // (mkBackgrounds themeName) // (mkExtras themeName);
     in
     lib.listToAttrs (
-      lib.mapAttrsToList (name: value: {
-        name = ".config/omarchy/themes/${themeName}/${name}";
-        inherit value;
-      }) entries
+      lib.mapAttrsToList
+        (name: value: {
+          name = ".config/omarchy/themes/${themeName}/${name}";
+          inherit value;
+        })
+        entries
     );
 
   allThemeFiles = lib.foldl' (acc: themeName: acc // (mkThemeFileEntries themeName)) { } themeNames;

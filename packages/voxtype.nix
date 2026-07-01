@@ -1,14 +1,14 @@
-{
-  lib,
-  stdenv,
-  fetchurl,
-  autoPatchelfHook,
-  makeWrapper,
-  alsa-lib,
-  vulkan-loader,
-  wtype,
-  wl-clipboard,
-  rocmPackages,
+{ lib
+, stdenv
+, fetchurl
+, autoPatchelfHook
+, makeWrapper
+, alsa-lib
+, vulkan-loader
+, wtype
+, wl-clipboard
+, rocmPackages
+,
 }:
 
 stdenv.mkDerivation rec {

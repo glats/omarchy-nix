@@ -12,11 +12,10 @@
 #   - survives Hyprland restarts
 #   - restarts automatically on failure
 #   - is inspectable via `systemctl --user status wayvnc`
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   cfg = config.omarchy.wayvnc;

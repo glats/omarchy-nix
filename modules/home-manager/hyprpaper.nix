@@ -1,7 +1,6 @@
-{
-  config,
-  pkgs,
-  ...
+{ config
+, pkgs
+, ...
 }:
 let
   selected_wallpaper_path = (import ../../lib/selected-wallpaper.nix config).wallpaper_path;

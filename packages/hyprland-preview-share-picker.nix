@@ -1,10 +1,10 @@
-{
-  lib,
-  rustPlatform,
-  fetchFromGitHub,
-  pkg-config,
-  gtk4,
-  gtk4-layer-shell,
+{ lib
+, rustPlatform
+, fetchFromGitHub
+, pkg-config
+, gtk4
+, gtk4-layer-shell
+,
 }:
 
 rustPlatform.buildRustPackage rec {

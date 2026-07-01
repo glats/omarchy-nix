@@ -14,11 +14,10 @@
   };
 
   outputs =
-    {
-      nixpkgs,
-      omarchy-nix,
-      home-manager,
-      ...
+    { nixpkgs
+    , omarchy-nix
+    , home-manager
+    , ...
     }:
     {
       nixosConfigurations.your-hostname = nixpkgs.lib.nixosSystem {

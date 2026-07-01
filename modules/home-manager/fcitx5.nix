@@ -7,11 +7,10 @@
 #   - fcitx5 and fcitx5-gtk live at the top level of pkgs.
 #   - fcitx5-qt and fcitx5-configtool are KDE-packaged and live under
 #     pkgs.kdePackages — `with pkgs; [...]` cannot resolve them.
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   cfg = config.omarchy.fcitx5;

@@ -1,7 +1,7 @@
-{
-  pkgs,
-  config,
-  lib,
+{ pkgs
+, config
+, lib
+,
 }:
 let
   plymouth-theme-omarchy = pkgs.callPackage ../packages/plymouth-theme-omarchy.nix { };

@@ -1,8 +1,7 @@
 inputs:
-{
-  config,
-  pkgs,
-  ...
+{ config
+, pkgs
+, ...
 }:
 {
   imports = [ ./hyprland/configuration.nix ];

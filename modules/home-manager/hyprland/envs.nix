@@ -1,9 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  osConfig ? { },
-  ...
+{ config
+, lib
+, pkgs
+, osConfig ? { }
+, ...
 }:
 let
   cfg = config.omarchy;

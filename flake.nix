@@ -13,23 +13,22 @@
     };
   };
   outputs =
-    inputs@{
-      self,
-      nixpkgs,
-      hyprland,
-      nix-colors,
-      elephant,
-      walker,
-      home-manager,
+    inputs@{ self
+    , nixpkgs
+    , hyprland
+    , nix-colors
+    , elephant
+    , walker
+    , home-manager
+    ,
     }:
     {
       nixosModules = {
         default =
-          {
-            config,
-            lib,
-            pkgs,
-            ...
+          { config
+          , lib
+          , pkgs
+          , ...
           }:
           {
             imports = [
@@ -45,12 +44,11 @@
 
       homeManagerModules = {
         default =
-          {
-            config,
-            lib,
-            pkgs,
-            osConfig ? { },
-            ...
+          { config
+          , lib
+          , pkgs
+          , osConfig ? { }
+          , ...
           }:
           {
             imports = [
@@ -69,11 +67,10 @@
         # Consumers must import nix-colors themselves before this module
         # (btop.nix reads config.colorScheme.palette at eval time).
         btop =
-          {
-            config,
-            lib,
-            pkgs,
-            ...
+          { config
+          , lib
+          , pkgs
+          , ...
           }:
           {
             imports = [
@@ -88,11 +85,10 @@
         # the omarchy options here (mirroring what homeManagerModules.default
         # does). Consumers set `omarchy.fcitx5.enable = true` to opt in.
         fcitx5 =
-          {
-            config,
-            lib,
-            pkgs,
-            ...
+          { config
+          , lib
+          , pkgs
+          , ...
           }:
           {
             imports = [

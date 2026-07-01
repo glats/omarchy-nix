@@ -1,11 +1,12 @@
-inputs: {
-  config,
-  pkgs,
-  lib,
-  ...
-}: let
+inputs: { config
+        , pkgs
+        , lib
+        , ...
+        }:
+let
   cfg = config.omarchy;
-in {
+in
+{
   home.file = {
     ".config/waybar/" = {
       source = ../../config/waybar;
