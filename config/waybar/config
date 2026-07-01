@@ -25,7 +25,7 @@
       "16": "16", "17": "17", "18": "18", "19": "19", "20": "20"
     },
     "on-click": "activate",
-    "all-outputs": true
+    "all-outputs": false
   },
   "custom/omarchy": {
     "format": "<span font='omarchy'>\ue900</span>",

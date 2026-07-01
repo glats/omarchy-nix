@@ -29,6 +29,15 @@
   opacity: 0.5;
 }
 
+#workspaces button.active {
+  font-weight: bold;
+  border-bottom: 2px solid @theme_text_color;
+}
+
+#workspaces button.visible {
+  opacity: 1.0;
+}
+
 #cpu,
 #battery,
 #pulseaudio,
