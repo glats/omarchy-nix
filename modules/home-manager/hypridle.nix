@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }:
+{
   services.hypridle = {
     enable = true;
     settings = {
@@ -33,4 +34,9 @@
   systemd.user.services.hypridle.Service.ExecStartPre = [
     "${pkgs.coreutils}/bin/rm -f %h/.local/state/omarchy/toggles/screensaver-off"
   ];
+
+  # Override Home Manager's Restart=always default. on-failure still
+  # restarts on crashes but respects manual systemctl stop, so the
+  # toggle-idle script can keep hypridle stopped.
+  systemd.user.services.hypridle.Service.Restart = lib.mkForce "on-failure";
 }
