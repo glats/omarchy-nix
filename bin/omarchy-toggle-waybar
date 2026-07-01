@@ -5,10 +5,10 @@
 
 omarchy-toggle waybar-off
 
-# pgrep -x / pkill -x match comm, which on Nix is `.waybar-wrapped`. Use -f
-# so the running waybar is detected and killed correctly.
-if pgrep -f "(^|/)\.?waybar(-wrapped)?( |\$)" >/dev/null; then
-  pkill -f "(^|/)\.?waybar(-wrapped)?( |\$)"
+if systemctl --user is-active --quiet waybar; then
+  systemctl --user stop waybar
 else
-  uwsm-app -- waybar >/dev/null 2>&1 &
+  systemctl --user start waybar
 fi
+# NOTE: waybar is managed by systemd user service.
+# Stderr captured via journald (StandardError=journal).
