@@ -29,12 +29,6 @@
   opacity: 0.5;
 }
 
-#workspaces button.active {
-  font-weight: bold;
-  background: alpha(@theme_text_color, 0.15);
-  border-radius: 50%;
-}
-
 #cpu,
 #battery,
 #pulseaudio,
