@@ -74,7 +74,7 @@ in
   ++ lib.optionals cfg.greeter.wayvnc.enable [
     "d /var/lib/greeter/.config 0750 greeter greeter - -"
     "d /var/lib/greeter/.config/wayvnc 0750 greeter greeter - -"
-    "f /var/lib/greeter/.config/wayvnc/config 0640 greeter greeter - + ${wayvncConfigFile}"
+    "C+ /var/lib/greeter/.config/wayvnc/config 0640 greeter greeter - ${wayvncConfigFile}"
   ];
 
   security.rtkit.enable = true;
