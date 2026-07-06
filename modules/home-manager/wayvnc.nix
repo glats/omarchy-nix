@@ -29,6 +29,7 @@ in
       address=0.0.0.0
       port=${toString cfg.port}
       enable_pam=${lib.boolToString cfg.enable_pam}
+      ${lib.optionalString (cfg.output != "") "output=${cfg.output}"}
     '';
 
     # Systemd user service for wayvnc.

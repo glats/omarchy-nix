@@ -595,6 +595,11 @@ lib: {
             default = true;
             description = "Enable PAM authentication (validates VNC credentials against the host's PAM stack). Required for VeNCrypt/TLS auth.";
           };
+          output = lib.mkOption {
+            type = lib.types.str;
+            default = "";
+            description = "Output to capture. Empty = focused output (default). Example: DP-3";
+          };
         };
       };
       default = { };
