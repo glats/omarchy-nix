@@ -274,7 +274,10 @@ in
       # backgrounded VNC server is already listening when regreet comes
       # up. Both are exec-once (run once at Hyprland startup); wayvnc
       # is backgrounded with `&` so a slow start cannot block regreet.
-      wayvncExec = lib.optionalString cfg.greeter.wayvnc.enable "exec-once = ${pkgs.wayvnc}/bin/wayvnc ${cfg.greeter.wayvnc.address} ${toString cfg.greeter.wayvnc.port} &\n";
+      wayvncOutputFlag = lib.optionalString (cfg.greeter.wayvnc.output != "")
+        ("-o " + cfg.greeter.wayvnc.output + " ");
+      wayvncExec = lib.optionalString cfg.greeter.wayvnc.enable
+        "exec-once = ${pkgs.wayvnc}/bin/wayvnc ${wayvncOutputFlag}${cfg.greeter.wayvnc.address} ${toString cfg.greeter.wayvnc.port} &\n";
     in
     ''
       ${monitorBlock}${cursorEnv}${wayvncExec}exec-once = ${greeterScript}/bin/greetd-regreet-start

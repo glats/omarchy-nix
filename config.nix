@@ -388,6 +388,11 @@ lib: {
                   default = true;
                   description = "Enable PAM authentication for greeter wayvnc (validates VNC credentials against the host's PAM stack).";
                 };
+                output = lib.mkOption {
+                  type = lib.types.str;
+                  default = "";
+                  description = "WayVNC output to capture. Empty = default (captures focused output). Example: DP-3";
+                };
               };
             };
             default = { };
