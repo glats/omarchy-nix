@@ -1,8 +1,9 @@
 inputs:
-{ config
-, pkgs
-, lib
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 let
   cfg = config.omarchy;
@@ -192,17 +193,26 @@ in
   # Alt+Shift toggle works at the password prompt.
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     let
-      greeterScript = pkgs.writeShellScript "greetd-regreet-start" ''
+      greeterScript = pkgs.writeShellScriptBin "greetd-regreet-start" ''
         # ── Phase 1: monitor selection ──────────────────────────────
+        # Logs to stderr (captured by Hyprland/greetd journal). 2s budget
+        # (20 × 100ms) for Hyprland monitor enumeration — up from the old
+        # 1s (10 × 100ms) which occasionally raced on cold boot.
         FOCUS='${cfg.greeter.focusMonitor}'
 
         if [ -n "$FOCUS" ]; then
-          # Wait for Hyprland to enumerate monitors (10 × 100ms).
-          for _ in $(seq 1 10); do
-            ${pkgs.hyprland}/bin/hyprctl monitors -j 2>/dev/null \
-              | ${pkgs.jq}/bin/jq -e 'length > 0' >/dev/null 2>&1 && break
+          enumerated=0
+          for _ in $(seq 1 20); do
+            if ${pkgs.hyprland}/bin/hyprctl monitors -j 2>/dev/null \
+              | ${pkgs.jq}/bin/jq -e 'length > 0' >/dev/null 2>&1; then
+              enumerated=1
+              break
+            fi
             sleep 0.1
           done
+          if [ "$enumerated" -eq 0 ]; then
+            echo "[greetd-regreet-start] WARNING: monitor enumeration timed out after 2s" >&2
+          fi
 
           # Match the target monitor by description substring.
           TARGET_MON=$(${pkgs.hyprland}/bin/hyprctl monitors all -j 2>/dev/null \
@@ -211,6 +221,7 @@ in
             | head -1)
 
           if [ -n "$TARGET_MON" ] && [ "$TARGET_MON" != "null" ]; then
+            echo "[greetd-regreet-start] focusing monitor: $TARGET_MON" >&2
             # Disable every external monitor except the target.
             for m in $(${pkgs.hyprland}/bin/hyprctl monitors all -j 2>/dev/null \
               | ${pkgs.jq}/bin/jq -r '.[].name'); do
@@ -221,20 +232,26 @@ in
               esac
             done
             ${pkgs.hyprland}/bin/hyprctl dispatch focusmonitor "$TARGET_MON" >/dev/null 2>&1
+          else
+            echo "[greetd-regreet-start] WARNING: no monitor matched focus '$FOCUS'" >&2
           fi
         fi
 
         # ── Phase 2: internal panel disable ─────────────────────────
+        echo "[greetd-regreet-start] checking external displays" >&2
         for s in /sys/class/drm/card*-*/status; do
           case "$s" in *-eDP-*) continue;; esac
           read -r st < "$s" 2>/dev/null
           if [ "$st" = connected ]; then
+            echo "[greetd-regreet-start] external display connected; disabling eDP-1" >&2
             ${pkgs.hyprland}/bin/hyprctl keyword monitor eDP-1,disable
             break
           fi
         done
+        echo "[greetd-regreet-start] panel disable done" >&2
 
         # ── Phase 3: launch greeter ─────────────────────────────────
+        echo "[greetd-regreet-start] launching regreet" >&2
         ${pkgs.regreet}/bin/regreet
         ${pkgs.hyprland}/bin/hyprctl dispatch exit
       '';
@@ -260,7 +277,7 @@ in
       wayvncExec = lib.optionalString cfg.greeter.wayvnc.enable "exec-once = ${pkgs.wayvnc}/bin/wayvnc ${cfg.greeter.wayvnc.address} ${toString cfg.greeter.wayvnc.port} &\n";
     in
     ''
-      ${monitorBlock}${cursorEnv}${wayvncExec}exec-once = ${greeterScript}
+      ${monitorBlock}${cursorEnv}${wayvncExec}exec-once = ${greeterScript}/bin/greetd-regreet-start
       ${inputBlock}
       misc {
           disable_hyprland_logo = true
