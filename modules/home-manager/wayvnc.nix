@@ -29,7 +29,6 @@ in
       address=0.0.0.0
       port=${toString cfg.port}
       enable_pam=${lib.boolToString cfg.enable_pam}
-      ${lib.optionalString (cfg.output != "") "output=${cfg.output}"}
     '';
 
     # Systemd user service for wayvnc.
@@ -48,7 +47,9 @@ in
           "DISPLAY"
         ];
         ExecStartPre = "${pkgs.bash}/bin/bash -c 'pkill wayvnc 2>/dev/null || true'";
-        ExecStart = "${pkgs.wayvnc}/bin/wayvnc";
+        ExecStart =
+          "${pkgs.wayvnc}/bin/wayvnc"
+          + lib.optionalString (cfg.output != "") " -o ${cfg.output}";
         Restart = "on-failure";
         RestartSec = 5;
       };
