@@ -5,6 +5,11 @@
 # omarchy:name=lock
 # omarchy:examples=omarchy system lock
 
+if [[ -n $OMARCHY_LOCK_ONLY ]]; then
+    hyprlock
+    exit 0
+fi
+
 pidof hyprlock || hyprlock &
 
 # Set keyboard layout to default (first layout)

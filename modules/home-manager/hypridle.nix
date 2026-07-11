@@ -5,23 +5,24 @@
     settings = {
       general = {
         lock_cmd = "omarchy-system-lock";
-        before_sleep_cmd = "loginctl lock-session";
+        before_sleep_cmd = "OMARCHY_LOCK_ONLY=true omarchy-system-lock";
         after_sleep_cmd = "hyprctl dispatch dpms on";
         ignore_dbus_inhibit = false;
-        inhibit_sleep = 3; # wait until screen is locked before sleep
+        inhibit_sleep = 3;
       };
       listener = [
         {
-          timeout = 150; # 2.5 minutes
-          on-timeout = "pidof hyprlock || omarchy-launch-screensaver";
+          timeout = 150;
+          on-timeout = "! omarchy-toggle-enabled idle-off && pidof hyprlock || omarchy-launch-screensaver";
         }
         {
-          timeout = 151; # just after screensaver starts
-          on-timeout = "loginctl lock-session";
+          timeout = 151;
+          on-timeout = "! omarchy-toggle-enabled idle-off && omarchy-system-lock";
+          on-resume = "omarchy-system-wake";
         }
         {
-          timeout = 330; # 5.5 minutes
-          on-timeout = "hyprctl dispatch dpms off";
+          timeout = 330;
+          on-timeout = "! omarchy-toggle-enabled idle-off && hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on && brightnessctl -r";
         }
       ];
@@ -29,14 +30,10 @@
   };
 
   # Clear stale screensaver-off flag when hypridle starts.
-  # The toggle script creates this flag but it persists across reboots;
-  # if hypridle restarts with the flag present, the screensaver never launches.
+  # This preserves the idle-off flag (managed by toggle-idle).
   systemd.user.services.hypridle.Service.ExecStartPre = [
     "${pkgs.coreutils}/bin/rm -f %h/.local/state/omarchy/toggles/screensaver-off"
   ];
 
-  # Override Home Manager's Restart=always default. on-failure still
-  # restarts on crashes but respects manual systemctl stop, so the
-  # toggle-idle script can keep hypridle stopped.
   systemd.user.services.hypridle.Service.Restart = lib.mkForce "on-failure";
 }

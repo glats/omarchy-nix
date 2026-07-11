@@ -1,0 +1,4 @@
+#!/bin/bash
+# omarchy:summary=Restore display and keyboard backlight after wake
+brightnessctl -r
+hyprctl dispatch dpms on
