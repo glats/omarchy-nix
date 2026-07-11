@@ -13,16 +13,16 @@
       listener = [
         {
           timeout = 150;
-          on-timeout = "! omarchy-toggle-enabled idle-off && pidof hyprlock || omarchy-launch-screensaver";
+          on-timeout = "omarchy-toggle-enabled idle-off || pidof hyprlock || omarchy-launch-screensaver";
         }
         {
           timeout = 151;
-          on-timeout = "! omarchy-toggle-enabled idle-off && omarchy-system-lock";
+          on-timeout = "omarchy-toggle-enabled idle-off || omarchy-system-lock";
           on-resume = "omarchy-system-wake";
         }
         {
           timeout = 330;
-          on-timeout = "! omarchy-toggle-enabled idle-off && hyprctl dispatch dpms off";
+          on-timeout = "omarchy-toggle-enabled idle-off || hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on && brightnessctl -r";
         }
       ];
