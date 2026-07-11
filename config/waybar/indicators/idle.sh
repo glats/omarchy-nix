@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if pgrep -x hypridle >/dev/null; then
-  echo '{"text": ""}'
-else
+if [[ -f "$HOME/.local/state/omarchy/toggles/idle-off" ]]; then
   echo '{"text": "󱫖", "tooltip": "Idle lock disabled", "class": "active"}'
+else
+  echo '{"text": ""}'
 fi

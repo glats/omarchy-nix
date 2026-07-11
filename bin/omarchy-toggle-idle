@@ -6,11 +6,11 @@ FLAG="$HOME/.local/state/omarchy/toggles/idle-off"
 
 if [[ -f $FLAG ]]; then
   rm $FLAG
-  notify-send -u low "Now locking computer when idle"
+  notify-send -u low "󱫖    Now locking computer when idle"
 else
   mkdir -p "$(dirname "$FLAG")"
   touch "$FLAG"
-  notify-send -u low "Stop locking computer when idle"
+  notify-send -u low "󱫖    Stop locking computer when idle"
   pkill -f org.omarchy.screensaver 2>/dev/null || true
 fi
 
