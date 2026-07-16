@@ -21,6 +21,44 @@ let
     ]
   );
 
+  # ── Greeter layout indicator (waybar-based keyboard layout display) ──
+  # Polls hyprctl every 1s to show "ES"/"LATAM" on a 24px bottom bar.
+  # Gated on cfg.greeter.layoutIndicator.enable; break all paths with
+  # full store references so no PATH dependency is needed.
+  layoutIndicatorScript = pkgs.writeShellScriptBin "greetd-kb-layout" ''
+    ACTIVE=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null \
+      | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .active_keymap' 2>/dev/null)
+    case "$ACTIVE" in
+      *Spanish*) echo "ES" ;;
+      *Latino*|*Latin*) echo "LATAM" ;;
+      *) echo "?" ;;
+    esac
+  '';
+
+  waybarGreeterConfig = pkgs.writeText "waybar-greeter-config" (
+    builtins.toJSON {
+      layer = "bottom";
+      position = "bottom";
+      height = 24;
+      modules-left = [ ];
+      modules-center = [ ];
+      modules-right = [ "custom/kb-layout" ];
+      "custom/kb-layout" = {
+        exec = "${layoutIndicatorScript}/bin/greetd-kb-layout";
+        interval = 1;
+        format = "{}";
+        tooltip = false;
+      };
+    }
+  );
+
+  waybarGreeterStyle = pkgs.writeText "waybar-greeter-style" ''
+    * { font-family: sans-serif; font-size: 14px; color: #cdd6f4; }
+    window#waybar { background: rgba(30, 30, 46, 0.9); }
+    #custom-kb-layout { padding: 0 12px; font-weight: bold; }
+    ${cfg.greeter.layoutIndicator.style}
+  '';
+
   elephantPkg = inputs.elephant.packages.${pkgs.stdenv.hostPlatform.system}.elephant;
 
   providersPkg = inputs.elephant.packages.${pkgs.stdenv.hostPlatform.system}.elephant-providers;
@@ -194,6 +232,10 @@ in
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     let
       greeterScript = pkgs.writeShellScriptBin "greetd-regreet-start" ''
+        ${lib.optionalString cfg.greeter.layoutIndicator.enable ''
+          # ── Phase 0: wait for waybar layer-shell surface to map ─────
+          sleep 0.5
+        ''}
         # ── Phase 1: monitor selection ──────────────────────────────
         # Logs to stderr (captured by Hyprland/greetd journal). 2s budget
         # (20 × 100ms) for Hyprland monitor enumeration — up from the old
@@ -274,13 +316,15 @@ in
       # backgrounded VNC server is already listening when regreet comes
       # up. Both are exec-once (run once at Hyprland startup); wayvnc
       # is backgrounded with `&` so a slow start cannot block regreet.
-      wayvncOutputFlag = lib.optionalString (cfg.greeter.wayvnc.output != "")
-        ("-o " + cfg.greeter.wayvnc.output + " ");
-      wayvncExec = lib.optionalString cfg.greeter.wayvnc.enable
-        "exec-once = ${pkgs.wayvnc}/bin/wayvnc ${wayvncOutputFlag}${cfg.greeter.wayvnc.address} ${toString cfg.greeter.wayvnc.port} &\n";
+      wayvncOutputFlag = lib.optionalString (cfg.greeter.wayvnc.output != "") (
+        "-o " + cfg.greeter.wayvnc.output + " "
+      );
+      wayvncExec = lib.optionalString cfg.greeter.wayvnc.enable "exec-once = ${pkgs.wayvnc}/bin/wayvnc ${wayvncOutputFlag}${cfg.greeter.wayvnc.address} ${toString cfg.greeter.wayvnc.port} &\n";
+      gtkPortalEnv = lib.optionalString cfg.greeter.layoutIndicator.enable "env = GTK_USE_PORTAL,0\n";
+      waybarExec = lib.optionalString cfg.greeter.layoutIndicator.enable "exec-once = ${pkgs.waybar}/bin/waybar -c /etc/greetd/waybar-config -s /etc/greetd/waybar-style.css\n";
     in
     ''
-      ${monitorBlock}${cursorEnv}${wayvncExec}exec-once = ${greeterScript}/bin/greetd-regreet-start
+      ${gtkPortalEnv}${waybarExec}${monitorBlock}${cursorEnv}${wayvncExec}exec-once = ${greeterScript}/bin/greetd-regreet-start
       ${inputBlock}
       misc {
           disable_hyprland_logo = true
@@ -289,6 +333,17 @@ in
       }
     ''
   );
+
+  # Greeter waybar config files — deployed on /etc/greetd/ for the greeter
+  # Hyprland session. Gated on both regreet being the active greeter type
+  # AND the layoutIndicator submodule being enabled.
+  environment.etc."greetd/waybar-config".source = lib.mkIf (
+    cfg.greeter.type == "regreet" && cfg.greeter.layoutIndicator.enable
+  ) waybarGreeterConfig;
+
+  environment.etc."greetd/waybar-style.css".source = lib.mkIf (
+    cfg.greeter.type == "regreet" && cfg.greeter.layoutIndicator.enable
+  ) waybarGreeterStyle;
 
   # Binary cache for Walker (speeds up builds)
   nix.settings = {

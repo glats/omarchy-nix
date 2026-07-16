@@ -398,6 +398,20 @@ lib: {
             default = { };
             description = "wayvnc configuration for the greeter Hyprland session (pre-login VNC).";
           };
+          layoutIndicator = lib.mkOption {
+            type = lib.types.submodule {
+              options = {
+                enable = lib.mkEnableOption "keyboard layout indicator in greeter";
+                style = lib.mkOption {
+                  type = lib.types.lines;
+                  default = "";
+                  description = "Additional CSS injected into greeter waybar stylesheet";
+                };
+              };
+            };
+            default = { };
+            description = "Keyboard layout indicator for the greeter Hyprland session. Only takes effect when greeter.type = 'regreet'.";
+          };
         };
       };
       default = { };
