@@ -37,8 +37,8 @@ let
 
   waybarGreeterConfig = pkgs.writeText "waybar-greeter-config" (
     builtins.toJSON {
-      layer = "bottom";
-      position = "bottom";
+      layer = "top";
+      position = "top";
       height = 24;
       modules-left = [ ];
       modules-center = [ ];
