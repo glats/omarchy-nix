@@ -21,42 +21,46 @@ let
     ]
   );
 
-  # ── Greeter layout indicator (waybar-based keyboard layout display) ──
-  # Polls hyprctl every 1s to show "ES"/"LATAM" on a 24px bottom bar.
-  # Gated on cfg.greeter.layoutIndicator.enable; break all paths with
-  # full store references so no PATH dependency is needed.
-  layoutIndicatorScript = pkgs.writeShellScriptBin "greetd-kb-layout" ''
+  # ── Greeter layout indicator (hyprctl notify-based) ─────────────────
+  # Uses hyprctl notify (compositor-internal) to show "ES"/"LATAM" at the
+  # login screen. Replaces both waybar (unreliable z-order due to Hyprland
+  # layer-shell bug) and XKB grp:alt_shift_toggle (which swallows the key
+  # event before Hyprland can process it). The Hyprland keybind fires the
+  # toggle script, which switches layouts programmatically and displays a
+  # compositor-level notification — GUARANTEED to render above everything.
+  # Gated on cfg.greeter.layoutIndicator.enable.
+  greetdKbNotify = pkgs.writeShellScriptBin "greetd-kb-notify" ''
     ACTIVE=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null \
       | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .active_keymap' 2>/dev/null)
     case "$ACTIVE" in
-      *Spanish*) echo "ES" ;;
-      *Latino*|*Latin*) echo "LATAM" ;;
-      *) echo "?" ;;
+      *Spanish*) LABEL="ES" ;;
+      *Latino*|*Latin*) LABEL="LATAM" ;;
+      *) LABEL="?" ;;
     esac
+    ${pkgs.hyprland}/bin/hyprctl notify -1 4000 "rgb(cdd6f4)" "fontsize:20  $LABEL"
   '';
 
-  waybarGreeterConfig = pkgs.writeText "waybar-greeter-config" (
-    builtins.toJSON {
-      layer = "overlay";
-      position = "top";
-      height = 24;
-      modules-left = [ ];
-      modules-center = [ ];
-      modules-right = [ "custom/kb-layout" ];
-      "custom/kb-layout" = {
-        exec = "${layoutIndicatorScript}/bin/greetd-kb-layout";
-        interval = 1;
-        format = "{}";
-        tooltip = false;
-      };
-    }
-  );
+  greetdKbToggle = pkgs.writeShellScriptBin "greetd-kb-toggle" ''
+    set -e
+    # Read current layout index (0-based)
+    KB_JSON=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null || echo '{"keyboards":[]}')
+    KB_NAME=$(echo "$KB_JSON" | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .name' 2>/dev/null)
+    KB_LAYOUTS=$(echo "$KB_JSON" | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .active_keymap' 2>/dev/null)
+    if [ -z "$KB_NAME" ] || [ "$KB_NAME" = "null" ]; then exit 0; fi
 
-  waybarGreeterStyle = pkgs.writeText "waybar-greeter-style" ''
-    * { font-family: sans-serif; font-size: 14px; color: #cdd6f4; }
-    window#waybar { background: rgba(30, 30, 46, 0.9); }
-    #custom-kb-layout { padding: 0 12px; font-weight: bold; }
-    ${cfg.greeter.layoutIndicator.style}
+    # Toggle to next layout
+    ${pkgs.hyprland}/bin/hyprctl switchxkblayout "$KB_NAME" next
+
+    # Wait for switch to apply, then show notification
+    sleep 0.1
+    ACTIVE=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null \
+      | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .active_keymap' 2>/dev/null)
+    case "$ACTIVE" in
+      *Spanish*) LABEL="ES" ;;
+      *Latino*|*Latin*) LABEL="LATAM" ;;
+      *) LABEL="?" ;;
+    esac
+    ${pkgs.hyprland}/bin/hyprctl notify -1 4000 "rgb(cdd6f4)" "fontsize:20  $LABEL"
   '';
 
   elephantPkg = inputs.elephant.packages.${pkgs.stdenv.hostPlatform.system}.elephant;
@@ -232,10 +236,6 @@ in
   environment.etc."greetd/hyprland.conf".text = lib.mkIf (cfg.greeter.type == "regreet") (
     let
       greeterScript = pkgs.writeShellScriptBin "greetd-regreet-start" ''
-        ${lib.optionalString cfg.greeter.layoutIndicator.enable ''
-          # ── Phase 0: wait for waybar layer-shell surface to map ─────
-          sleep 0.5
-        ''}
         # ── Phase 1: monitor selection ──────────────────────────────
         # Logs to stderr (captured by Hyprland/greetd journal). 2s budget
         # (20 × 100ms) for Hyprland monitor enumeration — up from the old
@@ -292,6 +292,11 @@ in
         done
         echo "[greetd-regreet-start] panel disable done" >&2
 
+        ${lib.optionalString cfg.greeter.layoutIndicator.enable ''
+          # ── Phase 2b: show initial keyboard layout notification ───────
+          ${greetdKbNotify}/bin/greetd-kb-notify
+        ''}
+
         # ── Phase 3: launch greeter ─────────────────────────────────
         echo "[greetd-regreet-start] launching regreet" >&2
         ${pkgs.regreet}/bin/regreet
@@ -306,10 +311,15 @@ in
         env = XCURSOR_SIZE,${toString cfg.greeter.cursor.size}
         env = HYPRCURSOR_SIZE,${toString cfg.greeter.cursor.size}
       '';
+      # When layoutIndicator is enabled, we omit kb_options so the
+      # Hyprland keybind handles Alt+Shift instead of XKB (which would
+      # swallow the event before Hyprland sees it).
       inputBlock = lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
         input {
             kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
-            kb_options = ${cfg.greeter.keyboard.options}
+            ${lib.optionalString (
+              !cfg.greeter.layoutIndicator.enable
+            ) "kb_options = ${cfg.greeter.keyboard.options}"}
         }
       '';
       # wayvnc must launch BEFORE greetd-regreet-start so that the
@@ -320,11 +330,10 @@ in
         "-o " + cfg.greeter.wayvnc.output + " "
       );
       wayvncExec = lib.optionalString cfg.greeter.wayvnc.enable "exec-once = ${pkgs.wayvnc}/bin/wayvnc ${wayvncOutputFlag}${cfg.greeter.wayvnc.address} ${toString cfg.greeter.wayvnc.port} &\n";
-      gtkPortalEnv = lib.optionalString cfg.greeter.layoutIndicator.enable "env = GTK_USE_PORTAL,0\n";
-      waybarExec = lib.optionalString cfg.greeter.layoutIndicator.enable "exec-once = ${pkgs.waybar}/bin/waybar -c /etc/greetd/waybar-config -s /etc/greetd/waybar-style.css\n";
+      kbToggleBind = lib.optionalString cfg.greeter.layoutIndicator.enable "bind = ALT, SHIFT, exec, ${greetdKbToggle}/bin/greetd-kb-toggle\n";
     in
     ''
-      ${gtkPortalEnv}${waybarExec}${monitorBlock}${cursorEnv}${wayvncExec}exec-once = ${greeterScript}/bin/greetd-regreet-start
+      ${kbToggleBind}${monitorBlock}${cursorEnv}${wayvncExec}exec-once = ${greeterScript}/bin/greetd-regreet-start
       ${inputBlock}
       misc {
           disable_hyprland_logo = true
@@ -333,17 +342,6 @@ in
       }
     ''
   );
-
-  # Greeter waybar config files — deployed on /etc/greetd/ for the greeter
-  # Hyprland session. Gated on both regreet being the active greeter type
-  # AND the layoutIndicator submodule being enabled.
-  environment.etc."greetd/waybar-config".source = lib.mkIf (
-    cfg.greeter.type == "regreet" && cfg.greeter.layoutIndicator.enable
-  ) waybarGreeterConfig;
-
-  environment.etc."greetd/waybar-style.css".source = lib.mkIf (
-    cfg.greeter.type == "regreet" && cfg.greeter.layoutIndicator.enable
-  ) waybarGreeterStyle;
 
   # Binary cache for Walker (speeds up builds)
   nix.settings = {
