@@ -31,7 +31,7 @@ let
   # Gated on cfg.greeter.layoutIndicator.enable.
   greetdKbNotify = pkgs.writeShellScriptBin "greetd-kb-notify" ''
     ACTIVE=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null \
-      | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .active_keymap' 2>/dev/null)
+      | ${pkgs.jq}/bin/jq -r '.keyboards[0].active_keymap // empty' 2>/dev/null)
     case "$ACTIVE" in
       *Spanish*) LABEL="ES" ;;
       *Latino*|*Latin*) LABEL="LATAM" ;;
@@ -40,27 +40,27 @@ let
     ${pkgs.hyprland}/bin/hyprctl notify -1 4000 "rgb(cdd6f4)" "fontsize:20  $LABEL"
   '';
 
-  greetdKbToggle = pkgs.writeShellScriptBin "greetd-kb-toggle" ''
-    set -e
-    # Read current layout index (0-based)
-    KB_JSON=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null || echo '{"keyboards":[]}')
-    KB_NAME=$(echo "$KB_JSON" | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .name' 2>/dev/null)
-    KB_LAYOUTS=$(echo "$KB_JSON" | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .active_keymap' 2>/dev/null)
-    if [ -z "$KB_NAME" ] || [ "$KB_NAME" = "null" ]; then exit 0; fi
-
-    # Toggle to next layout
-    ${pkgs.hyprland}/bin/hyprctl switchxkblayout "$KB_NAME" next
-
-    # Wait for switch to apply, then show notification
-    sleep 0.1
-    ACTIVE=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null \
-      | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .active_keymap' 2>/dev/null)
-    case "$ACTIVE" in
-      *Spanish*) LABEL="ES" ;;
-      *Latino*|*Latin*) LABEL="LATAM" ;;
-      *) LABEL="?" ;;
-    esac
-    ${pkgs.hyprland}/bin/hyprctl notify -1 4000 "rgb(cdd6f4)" "fontsize:20  $LABEL"
+  # Monitors keyboard layout changes every 1s and shows notification
+  # when the active layout switches. Uses polling instead of keybind
+  # because XKB grp:alt_shift_toggle consumes the key event before
+  # Hyprland can process it. Backgrounded in the greeter Hyprland
+  # session via exec-once with &.
+  greetdKbMonitor = pkgs.writeShellScriptBin "greetd-kb-monitor" ''
+    PREV=""
+    while true; do
+      ACTIVE=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null \
+        | ${pkgs.jq}/bin/jq -r '.keyboards[0].active_keymap // empty' 2>/dev/null)
+      if [ -n "$ACTIVE" ] && [ "$ACTIVE" != "$PREV" ]; then
+        PREV="$ACTIVE"
+        case "$ACTIVE" in
+          *Spanish*) LABEL="ES" ;;
+          *Latino*|*Latin*) LABEL="LATAM" ;;
+          *) LABEL="?" ;;
+        esac
+        ${pkgs.hyprland}/bin/hyprctl notify -1 4000 "rgb(cdd6f4)" "fontsize:20  $LABEL"
+      fi
+      sleep 1
+    done
   '';
 
   elephantPkg = inputs.elephant.packages.${pkgs.stdenv.hostPlatform.system}.elephant;
@@ -311,15 +311,10 @@ in
         env = XCURSOR_SIZE,${toString cfg.greeter.cursor.size}
         env = HYPRCURSOR_SIZE,${toString cfg.greeter.cursor.size}
       '';
-      # When layoutIndicator is enabled, we omit kb_options so the
-      # Hyprland keybind handles Alt+Shift instead of XKB (which would
-      # swallow the event before Hyprland sees it).
       inputBlock = lib.optionalString (cfg.greeter.keyboard.layouts != [ ]) ''
         input {
             kb_layout = ${lib.concatStringsSep "," cfg.greeter.keyboard.layouts}
-            ${lib.optionalString (
-              !cfg.greeter.layoutIndicator.enable
-            ) "kb_options = ${cfg.greeter.keyboard.options}"}
+            kb_options = ${cfg.greeter.keyboard.options}
         }
       '';
       # wayvnc must launch BEFORE greetd-regreet-start so that the
@@ -330,10 +325,10 @@ in
         "-o " + cfg.greeter.wayvnc.output + " "
       );
       wayvncExec = lib.optionalString cfg.greeter.wayvnc.enable "exec-once = ${pkgs.wayvnc}/bin/wayvnc ${wayvncOutputFlag}${cfg.greeter.wayvnc.address} ${toString cfg.greeter.wayvnc.port} &\n";
-      kbToggleBind = lib.optionalString cfg.greeter.layoutIndicator.enable "bind = ALT, SHIFT, exec, ${greetdKbToggle}/bin/greetd-kb-toggle\n";
+      kbMonitorExec = lib.optionalString cfg.greeter.layoutIndicator.enable "exec-once = ${greetdKbMonitor}/bin/greetd-kb-monitor &\n";
     in
     ''
-      ${kbToggleBind}${monitorBlock}${cursorEnv}${wayvncExec}exec-once = ${greeterScript}/bin/greetd-regreet-start
+      ${monitorBlock}${cursorEnv}${wayvncExec}${kbMonitorExec}exec-once = ${greeterScript}/bin/greetd-regreet-start
       ${inputBlock}
       misc {
           disable_hyprland_logo = true
