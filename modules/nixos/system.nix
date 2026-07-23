@@ -425,9 +425,27 @@ in
   # Power management profiles (performance/balanced/power-saver)
   services.power-profiles-daemon.enable = true;
 
-  # Credential storage for apps (gnome-keyring)
+  # Credential storage for apps (gnome-keyring).
+  # PAM unlocks the login keyring at session start. The secrets component
+  # (org.freedesktop.secrets DBus API) is needed by Electron's safeStorage
+  # (used by teams-for-linux, VS Code, etc. for token encryption). On GNOME
+  # the session manager handles this; under Hyprland/UWSM we ensure it via
+  # a systemd user service that starts before the graphical session.
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.greetd.enableGnomeKeyring = true;
+
+  systemd.user.services.gnome-keyring-secrets = {
+    description = "GNOME Keyring secrets component";
+    wantedBy = [ "graphical-session.target" ];
+    before = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --foreground --components=secrets";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+  };
 
   # Networking
   services.resolved.enable = true;
