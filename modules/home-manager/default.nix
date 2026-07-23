@@ -261,6 +261,7 @@ in
   };
 
   home.pointerCursor = {
+    enable = true;
     gtk.enable = true;
     name = if isLightModeEnabled then "Bibata-Modern-Classic" else "Bibata-Modern-Ice";
     package = pkgs.bibata-cursors;
