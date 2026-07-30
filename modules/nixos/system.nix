@@ -23,15 +23,15 @@ let
 
   # ── Greeter layout indicator (hyprctl notify-based) ─────────────────
   # Uses hyprctl notify (compositor-internal) to show "ES"/"LATAM" at the
-  # login screen. Replaces both waybar (unreliable z-order due to Hyprland
-  # layer-shell bug) and XKB grp:alt_shift_toggle (which swallows the key
-  # event before Hyprland can process it). The Hyprland keybind fires the
-  # toggle script, which switches layouts programmatically and displays a
-  # compositor-level notification — GUARANTEED to render above everything.
+  # login screen. XKB grp:alt_shift_toggle handles the actual layout switch
+  # via input.kb_options. A background polling script (greetd-kb-monitor)
+  # watches hyprctl devices every 1s and shows a notification when the
+  # active layout changes. An initial notification (greetd-kb-notify) shows
+  # the current layout before the greeter launches.
   # Gated on cfg.greeter.layoutIndicator.enable.
   greetdKbNotify = pkgs.writeShellScriptBin "greetd-kb-notify" ''
     ACTIVE=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null \
-      | ${pkgs.jq}/bin/jq -r '.keyboards[0].active_keymap // empty' 2>/dev/null)
+      | ${pkgs.jq}/bin/jq -r '[.keyboards[] | select(.name | test("video-bus|power-button|sleep-button|thinkpad-extra|hl-virtual-keyboard") | not)] | .[0].active_keymap // empty' 2>/dev/null)
     case "$ACTIVE" in
       *Spanish*) LABEL="ES" ;;
       *Latino*|*Latin*) LABEL="LATAM" ;;
@@ -49,7 +49,7 @@ let
     PREV=""
     while true; do
       ACTIVE=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null \
-        | ${pkgs.jq}/bin/jq -r '.keyboards[0].active_keymap // empty' 2>/dev/null)
+        | ${pkgs.jq}/bin/jq -r '[.keyboards[] | select(.name | test("video-bus|power-button|sleep-button|thinkpad-extra|hl-virtual-keyboard") | not)] | .[0].active_keymap // empty' 2>/dev/null)
       if [ -n "$ACTIVE" ] && [ "$ACTIVE" != "$PREV" ]; then
         PREV="$ACTIVE"
         case "$ACTIVE" in
