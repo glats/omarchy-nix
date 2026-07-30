@@ -33,8 +33,8 @@ let
     ACTIVE=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null \
       | ${pkgs.jq}/bin/jq -r '[.keyboards[] | select(.name | test("video-bus|power-button|sleep-button|thinkpad-extra|hl-virtual-keyboard") | not)] | .[0].active_keymap // empty' 2>/dev/null)
     case "$ACTIVE" in
-      *Spanish*) LABEL="ES" ;;
       *Latino*|*Latin*) LABEL="LATAM" ;;
+      *Spanish*) LABEL="ES" ;;
       *) LABEL="?" ;;
     esac
     ${pkgs.hyprland}/bin/hyprctl notify -1 4000 "rgb(cdd6f4)" "fontsize:20  $LABEL"
@@ -53,8 +53,8 @@ let
       if [ -n "$ACTIVE" ] && [ "$ACTIVE" != "$PREV" ]; then
         PREV="$ACTIVE"
         case "$ACTIVE" in
-          *Spanish*) LABEL="ES" ;;
           *Latino*|*Latin*) LABEL="LATAM" ;;
+          *Spanish*) LABEL="ES" ;;
           *) LABEL="?" ;;
         esac
         ${pkgs.hyprland}/bin/hyprctl notify -1 4000 "rgb(cdd6f4)" "fontsize:20  $LABEL"
