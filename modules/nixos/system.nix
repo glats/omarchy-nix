@@ -47,10 +47,14 @@ let
   # session via exec-once with &.
   greetdKbMonitor = pkgs.writeShellScriptBin "greetd-kb-monitor" ''
     PREV=""
+    FIRST=1
     while true; do
       ACTIVE=$(${pkgs.hyprland}/bin/hyprctl devices -j 2>/dev/null \
         | ${pkgs.jq}/bin/jq -r '[.keyboards[] | select(.name | test("video-bus|power-button|sleep-button|thinkpad-extra|hl-virtual-keyboard") | not)] | .[0].active_keymap // empty' 2>/dev/null)
-      if [ -n "$ACTIVE" ] && [ "$ACTIVE" != "$PREV" ]; then
+      if [ "$FIRST" = "1" ]; then
+        PREV="$ACTIVE"
+        FIRST=0
+      elif [ -n "$ACTIVE" ] && [ "$ACTIVE" != "$PREV" ]; then
         PREV="$ACTIVE"
         case "$ACTIVE" in
           *Latino*|*Latin*) LABEL="LATAM" ;;
