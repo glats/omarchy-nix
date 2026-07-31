@@ -36,12 +36,9 @@ in
     })
 
     # 32-bit GPU libraries (default-on with umbrella; required by most games)
-    # Also wires up Vulkan video driver hint per upstream "Set vulkan video driver"
     (lib.mkIf gaming.gpuLib32.enable {
-      hardware.opengl = {
-        enable = true;
-        driSupport = true;
-        driSupport32Bit = true;
+      hardware.graphics = {
+        enable32Bit = true;
       };
     })
 
@@ -86,15 +83,15 @@ in
     # RetroArch with assets and a default cores selection
     (lib.mkIf gaming.retroarch.enable {
       environment.systemPackages = with pkgs; [
-        (retroarch.override {
-          cores = with libretro; [
+        (retroarch.withCores (
+          cores: with cores; [
             snes9x
             mgba
             mupen64plus
-            beetle-psx
+            beetle-psx-hw
             genesis-plus-gx
-          ];
-        })
+          ]
+        ))
         retroarch-assets
       ];
     })
