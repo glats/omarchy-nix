@@ -226,10 +226,6 @@ let
     "SUPER CTRL, LEFT, Move grouped window focus left, changegroupactive, b"
     "SUPER CTRL, RIGHT, Move grouped window focus right, changegroupactive, f"
 
-    # Reorder tabs within a group (swaps active with prev/next)
-    "SUPER CTRL SHIFT, LEFT, Move group tab backward, movegroupwindow, b"
-    "SUPER CTRL SHIFT, RIGHT, Move group tab forward, movegroupwindow, f"
-
     # Scroll through a set of grouped windows with SUPER + ALT + scroll
     "SUPER ALT, mouse_down, Next window in group, changegroupactive, f"
     "SUPER ALT, mouse_up, Previous window in group, changegroupactive, b"
