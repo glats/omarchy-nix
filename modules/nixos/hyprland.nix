@@ -1,8 +1,9 @@
 inputs:
-{ config
-, pkgs
-, lib
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 let
   cfg = config.omarchy;
@@ -23,10 +24,12 @@ in
 {
   programs.hyprland = {
     enable = true;
-    # package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    package =
+      (if cfg.quattro.enable then inputs.quattro-hyprland else inputs.hyprland)
+      .packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     portalPackage =
-      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      (if cfg.quattro.enable then inputs.quattro-hyprland else inputs.hyprland)
+      .packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     withUWSM = lib.mkDefault true;
   };
 

@@ -29,9 +29,11 @@ in
     home.packages = [ quickshell ];
     home.sessionPath = [ "${runtimePath}/bin" ];
     home.sessionVariables.OMARCHY_PATH = runtimePath;
+    home.sessionVariables.OMARCHY_SHELL_IPC_TIMEOUT = "2s";
 
     xdg.configFile."environment.d/90-omarchy-quattro.conf".text = ''
       OMARCHY_PATH=${runtimePath}
+      OMARCHY_SHELL_IPC_TIMEOUT=2s
       PATH=${runtimePath}/bin:$PATH
     '';
   };
