@@ -1,8 +1,9 @@
 inputs:
-{ config
-, pkgs
-, lib
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 let
   cfg = config.omarchy;
@@ -11,6 +12,7 @@ in
 {
   imports = [
     (import ./hyprland.nix inputs)
+    (import ./quattro.nix inputs)
     (import ./system.nix inputs)
     (import ./1password.nix)
     (import ./containers.nix)

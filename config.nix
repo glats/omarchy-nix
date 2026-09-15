@@ -627,6 +627,13 @@ lib: {
       default = { };
       description = "Fcitx5 input method configuration";
     };
+    quattro = lib.mkOption {
+      type = lib.types.submodule {
+        options.enable = lib.mkEnableOption "the Quattro v4 runtime and assets";
+      };
+      default = { };
+      description = "Opt-in Quattro v4 runtime integration; v3 remains the default.";
+    };
     xdg = lib.mkOption {
       type = lib.types.submodule {
         options = {

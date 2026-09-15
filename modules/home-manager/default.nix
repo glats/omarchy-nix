@@ -1,8 +1,9 @@
 inputs:
-{ config
-, pkgs
-, lib
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 let
   packages = import ../packages.nix { inherit pkgs config lib; };
@@ -52,6 +53,7 @@ in
 {
   imports = [
     (import ./hyprland.nix inputs)
+    (import ./quattro.nix inputs)
     (import ./hyprlock.nix inputs)
     (import ./swaybg.nix)
     (import ./swayosd.nix)
