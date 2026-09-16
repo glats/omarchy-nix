@@ -65,7 +65,19 @@
                 inherit system;
               }).callPackage
                 ./packages/omarchy-runtime
-                { source = omarchy-quattro; };
+                {
+                  source = omarchy-quattro;
+                  runtimeDependencies = with quattro-nixpkgs.legacyPackages.${system}; [
+                    coreutils
+                    findutils
+                    gawk
+                    gnugrep
+                    gnused
+                    jq
+                    systemd
+                    util-linux
+                  ];
+                };
             quickshell = quickshell.packages.${system}.default;
           };
         }) quattroSystems

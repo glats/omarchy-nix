@@ -21,6 +21,11 @@ in
       quickshell
     ];
 
+    # The selected Quattro Hyprland package supplies `hyprctl`; the Quickshell
+    # package supplies both `quickshell` and `qs`. The runtime package wraps its
+    # helpers with the small shell-tool closure, while these compositor tools
+    # remain module-owned to avoid duplicating their large build closures.
+
     # Quattro scripts resolve their immutable defaults through OMARCHY_PATH.
     # The HM module provides the user-facing writable override directory.
     environment.sessionVariables.OMARCHY_PATH = lib.mkForce "${runtime}/share/omarchy";
