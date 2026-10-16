@@ -54,12 +54,40 @@
         "x86_64-linux"
         "aarch64-linux"
       ];
+      quattroPkgsFor =
+        system:
+        import quattro-hyprland.inputs.nixpkgs {
+          localSystem = system;
+          overlays = [
+            quattro-hyprland.overlays.hyprland-packages
+            quattro-hyprland.overlays.hyprland-extras
+            (final: prev: {
+              # The pinned GUIutils overlay forces GCC 15, but hyprtoolkit
+              # requires GCC 16's libstdc++. Keep this fix inside Quattro.
+              hyprland-guiutils = prev.hyprland-guiutils.override {
+                stdenv = final.gcc16Stdenv;
+              };
+              # Hyprland 0.56.2 requires glaze >=7,<8. Supplying the pinned
+              # source prevents CMake from trying FetchContent in the sandbox.
+              glaze-hyprland = prev.glaze-hyprland.overrideAttrs (_: {
+                version = "7.2.0";
+                src = final.fetchFromGitHub {
+                  owner = "stephenberry";
+                  repo = "glaze";
+                  tag = "v7.2.0";
+                  hash = "sha256-f3NVRi3SXKo42hn0WCw7JsOK3EkdOVJIcuzhPorKjFY=";
+                };
+              });
+            })
+          ];
+        };
     in
     {
       packages = builtins.listToAttrs (
         map (system: {
           name = system;
           value = {
+            quattro-hyprland = (quattroPkgsFor system).hyprland;
             omarchy-runtime =
               (import quattro-nixpkgs {
                 inherit system;
@@ -79,6 +107,20 @@
                   ];
                 };
             quickshell = quickshell.packages.${system}.default;
+          };
+        }) quattroSystems
+      );
+
+      checks = builtins.listToAttrs (
+        map (system: {
+          name = system;
+          value.quattro-toolchain = import ./tests/quattro-toolchain.nix {
+            pkgs = quattroPkgsFor system;
+          };
+          value.quattro-shell = import ./tests/quattro-shell.nix {
+            pkgs = quattro-nixpkgs.legacyPackages.${system};
+            homeManagerLib = quattro-home-manager.lib;
+            inherit inputs;
           };
         }) quattroSystems
       );

@@ -10,7 +10,7 @@ let
   runtime = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.omarchy-runtime;
 in
 {
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && config.wayland.windowManager.hyprland.configType == "lua") {
     # This is an opt-in entry point only. Starting omarchy-shell and retiring
     # v3 autostarts is intentionally deferred to the runtime ownership phase.
     xdg.configFile."hypr/hyprland.lua".source = "${runtime}/share/omarchy/config/hypr/hyprland.lua";

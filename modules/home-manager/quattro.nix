@@ -16,6 +16,7 @@ in
   imports = [
     (import ./hyprland-lua.nix inputs)
     (import ./quattro-theme.nix)
+    (import ./quattro-shell.nix inputs)
   ];
 
   config = lib.mkIf cfg.enable {

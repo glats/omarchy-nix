@@ -629,7 +629,31 @@ lib: {
     };
     quattro = lib.mkOption {
       type = lib.types.submodule {
-        options.enable = lib.mkEnableOption "the Quattro v4 runtime and assets";
+        options = {
+          enable = lib.mkEnableOption "the Quattro v4 runtime and assets";
+          shell = lib.mkOption {
+            type = lib.types.submodule {
+              options = {
+                enable = lib.mkEnableOption "the native Quickshell bar and panels";
+                settings = lib.mkOption {
+                  type = lib.types.attrsOf lib.types.anything;
+                  default = { };
+                  description = ''
+                    Declarative JSON-compatible contents of Quattro shell.json.
+                    This is Nix-owned; runtime layout editing is not persistent.
+                  '';
+                };
+                style = lib.mkOption {
+                  type = lib.types.attrsOf lib.types.anything;
+                  default = { };
+                  description = "Declarative TOML-compatible base theme shell.toml values.";
+                };
+              };
+            };
+            default = { };
+            description = "Opt-in native Quickshell configuration.";
+          };
+        };
       };
       default = { };
       description = "Opt-in Quattro v4 runtime integration; v3 remains the default.";

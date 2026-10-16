@@ -1,6 +1,8 @@
-{ config
-, pkgs
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 {
   wayland.windowManager.hyprland.settings = {
@@ -10,7 +12,11 @@
       "uwsm-app -- swaybg -i ~/.config/omarchy/current/background -m fill"
       "systemctl --user start hyprpolkitagent"
       "wl-clip-persist --clipboard regular & clipse -listen"
-      "systemctl --user restart waybar || systemctl --user start waybar"
+    ]
+    ++ lib.optional (
+      !config.omarchy.quattro.shell.enable
+    ) "systemctl --user restart waybar || systemctl --user start waybar"
+    ++ [
       "uwsm-app -- swayosd-server"
       "omarchy-powerprofiles-init"
       "uwsm-app -- omarchy-hyprland-monitor-watch"
@@ -19,8 +25,6 @@
       # "dropbox-cli start"  # Uncomment to run Dropbox
     ];
 
-    exec = [
-      "pkill -SIGUSR2 waybar"
-    ];
+    exec = lib.optional (!config.omarchy.quattro.shell.enable) "pkill -SIGUSR2 waybar";
   };
 }

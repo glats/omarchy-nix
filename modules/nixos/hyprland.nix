@@ -25,8 +25,10 @@ in
   programs.hyprland = {
     enable = true;
     package =
-      (if cfg.quattro.enable then inputs.quattro-hyprland else inputs.hyprland)
-      .packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      if cfg.quattro.enable then
+        inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.quattro-hyprland
+      else
+        inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     portalPackage =
       (if cfg.quattro.enable then inputs.quattro-hyprland else inputs.hyprland)
       .packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;

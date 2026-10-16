@@ -37,6 +37,33 @@ Deviations from Omarchy are made only when technically unavoidable and are alway
 
 ## Quick Start
 
+### Experimental Quattro package boundary
+
+`packages.<system>.quattro-hyprland` keeps the pinned Hyprland dependency
+overlays and builds GUIutils with GCC 16 to match hyprtoolkit's C++ runtime.
+Its private glaze dependency is pinned to 7.2.0, as required by Hyprland 0.56.2,
+instead of letting CMake attempt a network download of that source.
+Both NixOS and Home Manager select this package when `omarchy.quattro.enable`
+is set. The v3 package selection and the host's global compiler are unchanged.
+`checks.<system>.quattro-toolchain` checks compiler alignment and the wrapped
+GUIutils dependency. This package boundary is not a completed desktop migration;
+session ownership and runtime acceptance still need separate verification.
+
+### Native Quattro shell (opt-in)
+
+`omarchy.quattro.shell.enable` defaults to `false` and requires
+`omarchy.quattro.enable`. When enabled, one systemd user service starts pinned
+Quickshell at `graphical-session.target`; it does not run Omarchy's shell
+supervisor or monitor watcher. Configure the complete upstream `shell.json`
+through `omarchy.quattro.shell.settings`, including the bar layout and
+`plugins` policy. This file is Nix-owned, so editing the runtime layout is not
+persistent. `omarchy.quattro.shell.style` supplies base theme `shell.toml`
+values, while the mutable `~/.config/omarchy/shell.toml` override remains
+available. The Quickshell palette foundation is generated from `colorScheme`;
+existing GTK and application theme generation is unchanged. Waybar's fork
+autostart/reload commands are omitted only while the native shell is enabled;
+other Quattro services remain enabled as before.
+
 ### Prerequisites
 1. A [NixOS](https://nixos.org/) installation
 2. [Home Manager](https://github.com/nix-community/home-manager) configured
