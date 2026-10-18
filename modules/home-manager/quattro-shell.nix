@@ -27,6 +27,7 @@ let
         panelCommands
         pkgs.pulseaudio
         pkgs.libxkbcommon
+        pkgs.wtype
       ]
     }:${lib.escapeShellArg legacyBin}:${lib.escapeShellArg "${runtime}/share/omarchy/bin"}:$PATH
     exec ${quickshell}/bin/quickshell -n -p ${lib.escapeShellArg "${runtimePath}/shell"}

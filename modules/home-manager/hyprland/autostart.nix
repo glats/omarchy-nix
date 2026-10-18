@@ -11,6 +11,9 @@
       # "waybar"
       "uwsm-app -- swaybg -i ~/.config/omarchy/current/background -m fill"
       "systemctl --user start hyprpolkitagent"
+    ]
+    ++ lib.optionals config.omarchy.quattro.shell.enable [ "wl-clip-persist --clipboard regular" ]
+    ++ lib.optionals (!config.omarchy.quattro.shell.enable) [
       "wl-clip-persist --clipboard regular & clipse -listen"
     ]
     ++ lib.optional (

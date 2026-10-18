@@ -44,7 +44,7 @@ let
   mainBindings = [
     # Menus
     "SUPER, SPACE, Launch apps, exec, ${omarchyExec}/omarchy-launch-walker"
-    "SUPER CTRL, E, Emoji picker, exec, ${omarchyExec}/omarchy-launch-walker -m symbols"
+    "SUPER CTRL, E, Emoji picker, exec, ${pick "${omarchyExec}/omarchy-launch-walker -m symbols" "omarchy-shell shell toggle omarchy.emojis"}"
     "SUPER CTRL, C, Capture menu, exec, ${omarchyExec}/omarchy-menu capture"
     "SUPER CTRL, O, Toggle menu, exec, ${omarchyExec}/omarchy-menu toggle"
     "SUPER ALT, SPACE, Omarchy menu, exec, ${omarchyExec}/omarchy-menu"
@@ -259,7 +259,7 @@ let
     "SUPER, C, Universal copy, sendshortcut, CTRL, Insert,"
     "SUPER, V, Universal paste, sendshortcut, SHIFT, Insert,"
     "SUPER, X, Universal cut, sendshortcut, CTRL, X,"
-    "SUPER CTRL, V, Clipboard manager, exec, ${omarchyExec}/omarchy-launch-walker -m clipboard"
+    "SUPER CTRL, V, Clipboard manager, exec, ${pick "${omarchyExec}/omarchy-launch-walker -m clipboard" "omarchy-shell shell toggle omarchy.clipboard"}"
   ];
 
   # Mouse bindings (bindmd)
