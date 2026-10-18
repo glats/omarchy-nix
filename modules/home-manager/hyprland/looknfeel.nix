@@ -1,8 +1,22 @@
-{ config
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
+  legacy = !config.omarchy.quattro.enable;
+  dropLockedBorders =
+    text:
+    if legacy then
+      text
+    else
+      lib.replaceStrings
+        [
+          "  col.border_locked_active = -1\n  col.border_locked_inactive = -1\n"
+        ]
+        [ "" ]
+        text;
   hexToRgba =
     hex: alpha:
     let
@@ -14,7 +28,7 @@ let
   shadowColor = hexToRgba config.colorScheme.palette.base00 "ee";
 in
 {
-  wayland.windowManager.hyprland.extraConfig = ''
+  wayland.windowManager.hyprland.extraConfig = dropLockedBorders ''
     group {
       col.border_active = ${activeBorder}
       col.border_inactive = ${inactiveBorder}
@@ -112,8 +126,7 @@ in
       ];
     };
 
-    dwindle = {
-      pseudotile = true;
+    dwindle = lib.optionalAttrs legacy { pseudotile = true; } // {
       preserve_split = true;
       force_split = 2;
     };
