@@ -1,9 +1,10 @@
-{ config
-, pkgs
-, lib
-, ...
-}:
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+lib.mkIf (!(config.omarchy.quattro.shell.enable or false)) {
   systemd.user.services.omarchy-battery-monitor = {
     Unit = {
       Description = "Omarchy Battery Monitor";
