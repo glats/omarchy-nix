@@ -1,11 +1,17 @@
-{ config
-, pkgs
-, lib
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 let
   cfg = config.omarchy;
   homeDir = config.home.homeDirectory;
+  toggleTopBar =
+    if cfg.quattro.shell.enable or false then
+      "${homeDir}/.local/share/omarchy/quattro/bin/omarchy-toggle bar-off"
+    else
+      "${omarchyExec}/omarchy-toggle-waybar";
   # OSD client for the currently focused monitor
   osdclient = "swayosd-client --monitor \"$(omarchy-hyprland-monitor-focused)\"";
 
@@ -38,7 +44,7 @@ let
     "SUPER, K, Show key bindings, exec, ${omarchyExec}/omarchy-show-keybindings"
 
     # Aesthetics
-    "SUPER SHIFT, SPACE, Toggle top bar, exec, ${omarchyExec}/omarchy-toggle-waybar"
+    "SUPER SHIFT, SPACE, Toggle top bar, exec, ${toggleTopBar}"
     "SUPER CTRL, SPACE, Theme background menu, exec, ${omarchyExec}/omarchy-menu background"
     "SUPER SHIFT CTRL, SPACE, Theme menu, exec, ${omarchyExec}/omarchy-menu theme"
     "SUPER, BACKSPACE, Toggle window transparency, exec, ${omarchyExec}/omarchy-hyprland-active-window-transparency-toggle"

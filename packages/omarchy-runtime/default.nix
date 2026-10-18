@@ -26,6 +26,10 @@ stdenvNoCC.mkDerivation {
     cp "${source}/version" "$out/share/omarchy/version"
     chmod -R u+w "$out/share/omarchy/bin"
 
+    chmod u+w "$out/share/omarchy/shell/services" "$out/share/omarchy/shell/services/PluginRegistry.qml"
+    substituteInPlace "$out/share/omarchy/shell/services/PluginRegistry.qml" \
+      --replace-fail 'find \"$dir\" -mindepth 2' 'find -L \"$dir\" -mindepth 2'
+
     # Upstream intentionally relies on Arch's ambient PATH. Keep the source
     # scripts unchanged, but make the shell entrypoint, IPC client, and restart
     # helper resolve their Nix-provided executables deterministically. The
