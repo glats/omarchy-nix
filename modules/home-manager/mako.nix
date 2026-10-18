@@ -1,13 +1,15 @@
-{ config
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   cfg = config.omarchy;
 in
 {
   # Enable mako service
-  services.mako.enable = true;
+  services.mako.enable = !(config.omarchy.quattro.shell.enable or false);
 
   # Install mako core config
   home.file.".local/share/omarchy/default/mako/core.ini".source = ../../default/mako/core.ini;

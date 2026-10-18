@@ -16,8 +16,8 @@
     ++ lib.optional (
       !config.omarchy.quattro.shell.enable
     ) "systemctl --user restart waybar || systemctl --user start waybar"
+    ++ lib.optional (!config.omarchy.quattro.shell.enable) "uwsm-app -- swayosd-server"
     ++ [
-      "uwsm-app -- swayosd-server"
       "omarchy-powerprofiles-init"
       "uwsm-app -- omarchy-hyprland-monitor-watch"
       "uwsm-app -- walker --gapplication-service"

@@ -7,6 +7,15 @@
 let
   cfg = config.omarchy;
   homeDir = config.home.homeDirectory;
+  quattroShell = cfg.quattro.shell.enable or false;
+  pick =
+    legacy: quattro:
+    if quattroShell then
+      "env PATH=${homeDir}/.local/share/omarchy/quattro/bin:${
+        lib.makeBinPath [ pkgs.pulseaudio ]
+      }:$PATH ${quattro}"
+    else
+      legacy;
   toggleTopBar =
     if cfg.quattro.shell.enable or false then
       "${homeDir}/.local/share/omarchy/quattro/bin/omarchy-toggle bar-off"
@@ -52,11 +61,11 @@ let
     "SUPER CTRL, BACKSPACE, Toggle single-window square aspect, exec, ${omarchyExec}/omarchy-hyprland-window-single-square-aspect-toggle"
 
     # Notifications
-    "SUPER, COMMA, Dismiss last notification, exec, makoctl dismiss"
-    "SUPER SHIFT, COMMA, Dismiss all notifications, exec, makoctl dismiss --all"
-    "SUPER CTRL, COMMA, Toggle silencing notifications, exec, ${omarchyExec}/omarchy-toggle-notification-silencing"
-    "SUPER ALT, COMMA, Invoke last notification, exec, makoctl invoke"
-    "SUPER SHIFT ALT, COMMA, Restore last notification, exec, makoctl restore"
+    "SUPER, COMMA, Dismiss last notification, exec, ${pick "makoctl dismiss" "omarchy-shell notifications dismissOne"}"
+    "SUPER SHIFT, COMMA, Dismiss all notifications, exec, ${pick "makoctl dismiss --all" "omarchy-shell notifications dismissAll"}"
+    "SUPER CTRL, COMMA, Toggle silencing notifications, exec, ${pick "${omarchyExec}/omarchy-toggle-notification-silencing" "omarchy-shell notifications toggleDnd"}"
+    "SUPER ALT, COMMA, Invoke last notification, exec, ${pick "makoctl invoke" "omarchy-shell notifications invokeLast"}"
+    "SUPER SHIFT ALT, COMMA, Restore last notification, exec, ${pick "makoctl restore" "omarchy-shell notifications showHistory"}"
 
     # Toggles
     "SUPER CTRL, I, Toggle locking on idle, exec, ${omarchyExec}/omarchy-toggle-idle"
@@ -261,20 +270,20 @@ let
 
   # Multimedia bindings (bindeld - repeat enabled, works when locked)
   multimediaBindings = [
-    ",XF86AudioRaiseVolume, Volume up, exec, ${osdclient} --output-volume raise"
-    ",XF86AudioLowerVolume, Volume down, exec, ${osdclient} --output-volume lower"
-    ",XF86AudioMute, Mute, exec, ${osdclient} --output-volume mute-toggle"
-    ",XF86AudioMicMute, Mute microphone, exec, ${omarchyExec}/omarchy-audio-input-mute"
-    ",XF86MonBrightnessUp, Brightness up, exec, ${omarchyExec}/omarchy-brightness-display +5%"
-    ",XF86MonBrightnessDown, Brightness down, exec, ${omarchyExec}/omarchy-brightness-display 5%-"
+    ",XF86AudioRaiseVolume, Volume up, exec, ${pick "${osdclient} --output-volume raise" "omarchy-audio-output-volume raise"}"
+    ",XF86AudioLowerVolume, Volume down, exec, ${pick "${osdclient} --output-volume lower" "omarchy-audio-output-volume lower"}"
+    ",XF86AudioMute, Mute, exec, ${pick "${osdclient} --output-volume mute-toggle" "omarchy-audio-output-volume mute-toggle"}"
+    ",XF86AudioMicMute, Mute microphone, exec, ${pick "${omarchyExec}/omarchy-audio-input-mute" "omarchy-audio-input-mute"}"
+    ",XF86MonBrightnessUp, Brightness up, exec, ${pick "${omarchyExec}/omarchy-brightness-display +5%" "omarchy-brightness-display +5%"}"
+    ",XF86MonBrightnessDown, Brightness down, exec, ${pick "${omarchyExec}/omarchy-brightness-display 5%-" "omarchy-brightness-display 5%-"}"
     ",XF86KbdBrightnessUp, Keyboard brightness up, exec, ${omarchyExec}/omarchy-brightness-keyboard up"
     ",XF86KbdBrightnessDown, Keyboard brightness down, exec, ${omarchyExec}/omarchy-brightness-keyboard down"
 
     # Precise 1% multimedia adjustments with Alt modifier
-    "ALT, XF86AudioRaiseVolume, Volume up precise, exec, ${osdclient} --output-volume +1"
-    "ALT, XF86AudioLowerVolume, Volume down precise, exec, ${osdclient} --output-volume -1"
-    "ALT, XF86MonBrightnessUp, Brightness up precise, exec, ${omarchyExec}/omarchy-brightness-display +1%"
-    "ALT, XF86MonBrightnessDown, Brightness down precise, exec, ${omarchyExec}/omarchy-brightness-display 1%-"
+    "ALT, XF86AudioRaiseVolume, Volume up precise, exec, ${pick "${osdclient} --output-volume +1" "omarchy-audio-output-volume +1"}"
+    "ALT, XF86AudioLowerVolume, Volume down precise, exec, ${pick "${osdclient} --output-volume -1" "omarchy-audio-output-volume -1"}"
+    "ALT, XF86MonBrightnessUp, Brightness up precise, exec, ${pick "${omarchyExec}/omarchy-brightness-display +1%" "omarchy-brightness-display +1%"}"
+    "ALT, XF86MonBrightnessDown, Brightness down precise, exec, ${pick "${omarchyExec}/omarchy-brightness-display 1%-" "omarchy-brightness-display 1%-"}"
   ];
 
   # Keyboard backlight cycle (bindld - works when locked)
@@ -293,10 +302,10 @@ let
 
   # Media player bindings (bindld - works when locked)
   mediaPlayerBindings = [
-    ", XF86AudioNext, Next track, exec, ${osdclient} --playerctl next"
-    ", XF86AudioPause, Pause, exec, ${osdclient} --playerctl play-pause"
-    ", XF86AudioPlay, Play, exec, ${osdclient} --playerctl play-pause"
-    ", XF86AudioPrev, Previous track, exec, ${osdclient} --playerctl previous"
+    ", XF86AudioNext, Next track, exec, ${pick "${osdclient} --playerctl next" "omarchy-shell media next"}"
+    ", XF86AudioPause, Pause, exec, ${pick "${osdclient} --playerctl play-pause" "omarchy-shell media playPause"}"
+    ", XF86AudioPlay, Play, exec, ${pick "${osdclient} --playerctl play-pause" "omarchy-shell media playPause"}"
+    ", XF86AudioPrev, Previous track, exec, ${pick "${osdclient} --playerctl previous" "omarchy-shell media previous"}"
 
     # Switch audio output with Super + Mute
     "SUPER, XF86AudioMute, Switch audio output, exec, ${omarchyExec}/omarchy-audio-output-switch"
