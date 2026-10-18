@@ -28,7 +28,7 @@ in
 
     # Quattro scripts resolve their immutable defaults through OMARCHY_PATH.
     # The HM module provides the user-facing writable override directory.
-    environment.sessionVariables.OMARCHY_PATH = lib.mkForce "${runtime}/share/omarchy";
+    environment.sessionVariables.OMARCHY_PATH = lib.mkForce "$HOME/.local/share/omarchy/quattro";
 
     # Do not translate Quattro's Arch PAM files here. The pinned source uses
     # `account include system-local-login`; this portable module has not yet
