@@ -17,7 +17,7 @@ let
   # Only these panel APIs differ from the retained personal commands.
   panelCommands = pkgs.runCommand "quattro-panel-commands" { } ''
     mkdir -p "$out/bin"
-    for command in omarchy-powerprofiles-set omarchy-powerprofiles-list omarchy-battery-status omarchy-voxtype-status omarchy-theme-bg-set omarchy-theme-bg-next omarchy-system-lock omarchy-hyprland-session-locked; do
+    for command in omarchy-powerprofiles-set omarchy-powerprofiles-list omarchy-battery-status omarchy-voxtype-status omarchy-theme-bg-set omarchy-theme-bg-next omarchy-system-lock omarchy-hyprland-session-locked omarchy-toggle-idle; do
       ln -s ${runtime}/share/omarchy/bin/$command "$out/bin/$command"
     done
   '';
@@ -60,6 +60,17 @@ in
     # The shell background reads the state link while hyprlock reads the
     # config link, so adopt the current background once and keep the config
     # link pointing at the state link.
+    # Stay Awake moves from the legacy idle-off toggle to the shell's marker.
+    home.activation.migrateStayAwake = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      legacy="${config.home.homeDirectory}/.local/state/omarchy/toggles/idle-off"
+      marker="${config.home.homeDirectory}/.local/state/omarchy/indicators/stay-awake"
+      if [[ -e "$legacy" ]]; then
+        run mkdir -p "$(dirname "$marker")"
+        run touch "$marker"
+        run rm -f "$legacy"
+      fi
+    '';
+
     home.activation.seedQuattroBackground = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
       state="${config.home.homeDirectory}/.local/state/omarchy/current"
       legacy="${config.xdg.configHome}/omarchy/current"

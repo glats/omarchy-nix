@@ -71,7 +71,7 @@ let
     "SUPER SHIFT ALT, COMMA, Restore last notification, exec, ${pick "makoctl restore" "omarchy-shell notifications showHistory"}"
 
     # Toggles
-    "SUPER CTRL, I, Toggle locking on idle, exec, ${omarchyExec}/omarchy-toggle-idle"
+    "SUPER CTRL, I, Toggle locking on idle, exec, ${pick "${omarchyExec}/omarchy-toggle-idle" "omarchy-toggle-idle"}"
     "SUPER CTRL, N, Toggle nightlight, exec, ${omarchyExec}/omarchy-toggle-nightlight"
     "SUPER CTRL, Delete, Toggle laptop display, exec, ${omarchyExec}/omarchy-hyprland-monitor-internal toggle"
     "SUPER CTRL ALT, Delete, Toggle laptop display mirroring, exec, ${omarchyExec}/omarchy-hyprland-monitor-internal-mirror toggle"

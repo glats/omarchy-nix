@@ -10,11 +10,7 @@ let
   lock =
     if quattroShell then "env PATH=${quattroBin}:$PATH omarchy-system-lock" else "omarchy-system-lock";
   lockOnly = if quattroShell then lock else "OMARCHY_LOCK_ONLY=true omarchy-system-lock";
-  isLocked =
-    if quattroShell then
-      "env PATH=${quattroBin}:$PATH omarchy-hyprland-session-locked"
-    else
-      "pidof hyprlock";
+  stayAwake = "$HOME/.local/state/omarchy/indicators/stay-awake";
 in
 {
   services.hypridle = {
@@ -27,22 +23,31 @@ in
         ignore_dbus_inhibit = false;
         inhibit_sleep = 3;
       };
-      listener = [
-        {
-          timeout = 150;
-          on-timeout = "omarchy-toggle-enabled idle-off || ${isLocked} || omarchy-launch-screensaver";
-        }
-        {
-          timeout = 151;
-          on-timeout = "omarchy-toggle-enabled idle-off || ${lock}";
-          on-resume = "omarchy-system-wake";
-        }
-        {
-          timeout = 330;
-          on-timeout = "omarchy-toggle-enabled idle-off || hyprctl dispatch dpms off";
-          on-resume = "hyprctl dispatch dpms on && brightnessctl -r";
-        }
-      ];
+      # Under the Quattro shell, omarchy.idle owns the screensaver and lock
+      # timers; hypridle keeps display power and the before-sleep lock.
+      listener =
+        lib.optionals (!quattroShell) [
+          {
+            timeout = 150;
+            on-timeout = "omarchy-toggle-enabled idle-off || pidof hyprlock || omarchy-launch-screensaver";
+          }
+          {
+            timeout = 151;
+            on-timeout = "omarchy-toggle-enabled idle-off || ${lock}";
+            on-resume = "omarchy-system-wake";
+          }
+        ]
+        ++ [
+          {
+            timeout = 330;
+            on-timeout =
+              if quattroShell then
+                "[ -f ${stayAwake} ] || hyprctl dispatch dpms off"
+              else
+                "omarchy-toggle-enabled idle-off || hyprctl dispatch dpms off";
+            on-resume = "hyprctl dispatch dpms on && brightnessctl -r";
+          }
+        ];
     };
   };
 
