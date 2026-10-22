@@ -53,7 +53,7 @@ let
     "SUPER ALT, SPACE, Omarchy menu, exec, ${menu "root"}"
     "SUPER SHIFT, code:201, Omarchy menu, exec, ${menu "root"}"
     "SUPER, ESCAPE, System menu, exec, ${menu "system"}"
-    "SUPER, K, Show key bindings, exec, ${omarchyExec}/omarchy-show-keybindings"
+    "SUPER, K, Show key bindings, exec, ${pick "${omarchyExec}/omarchy-show-keybindings" "omarchy-menu-keybindings"}"
 
     # Aesthetics
     "SUPER SHIFT, SPACE, Toggle top bar, exec, ${toggleTopBar}"
