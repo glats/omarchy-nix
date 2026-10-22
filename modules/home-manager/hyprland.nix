@@ -18,5 +18,5 @@ inputs:
     # format while adopting the Quattro runtime independently.
     configType = lib.mkDefault (if config.omarchy.quattro.enable then "lua" else "hyprlang");
   };
-  services.hyprpolkitagent.enable = true;
+  services.hyprpolkitagent.enable = !(config.omarchy.quattro.shell.enable or false);
 }
