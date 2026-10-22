@@ -16,6 +16,9 @@ let
       }:$PATH ${quattro}"
     else
       legacy;
+  menu =
+    route:
+    pick "${omarchyExec}/omarchy-menu${lib.optionalString (route != "root") " ${route}"}" "omarchy-shell shell toggle omarchy.menu '{\"menu\":\"${route}\"}'";
   toggleTopBar =
     if cfg.quattro.shell.enable or false then
       "${homeDir}/.local/share/omarchy/quattro/bin/omarchy-toggle bar-off"
@@ -45,17 +48,17 @@ let
     # Menus
     "SUPER, SPACE, Launch apps, exec, ${omarchyExec}/omarchy-launch-walker"
     "SUPER CTRL, E, Emoji picker, exec, ${pick "${omarchyExec}/omarchy-launch-walker -m symbols" "omarchy-shell shell toggle omarchy.emojis"}"
-    "SUPER CTRL, C, Capture menu, exec, ${omarchyExec}/omarchy-menu capture"
-    "SUPER CTRL, O, Toggle menu, exec, ${omarchyExec}/omarchy-menu toggle"
-    "SUPER ALT, SPACE, Omarchy menu, exec, ${omarchyExec}/omarchy-menu"
-    "SUPER SHIFT, code:201, Omarchy menu, exec, ${omarchyExec}/omarchy-menu"
-    "SUPER, ESCAPE, System menu, exec, ${omarchyExec}/omarchy-menu system"
+    "SUPER CTRL, C, Capture menu, exec, ${menu "capture"}"
+    "SUPER CTRL, O, Toggle menu, exec, ${menu "toggle"}"
+    "SUPER ALT, SPACE, Omarchy menu, exec, ${menu "root"}"
+    "SUPER SHIFT, code:201, Omarchy menu, exec, ${menu "root"}"
+    "SUPER, ESCAPE, System menu, exec, ${menu "system"}"
     "SUPER, K, Show key bindings, exec, ${omarchyExec}/omarchy-show-keybindings"
 
     # Aesthetics
     "SUPER SHIFT, SPACE, Toggle top bar, exec, ${toggleTopBar}"
-    "SUPER CTRL, SPACE, Theme background menu, exec, ${omarchyExec}/omarchy-menu background"
-    "SUPER SHIFT CTRL, SPACE, Theme menu, exec, ${omarchyExec}/omarchy-menu theme"
+    "SUPER CTRL, SPACE, Theme background menu, exec, ${menu "background"}"
+    "SUPER SHIFT CTRL, SPACE, Theme menu, exec, ${menu "theme"}"
     "SUPER, BACKSPACE, Toggle window transparency, exec, ${omarchyExec}/omarchy-hyprland-active-window-transparency-toggle"
     "SUPER SHIFT, BACKSPACE, Toggle window gaps, exec, ${omarchyExec}/omarchy-hyprland-window-gaps-toggle"
     "SUPER CTRL, BACKSPACE, Toggle single-window square aspect, exec, ${omarchyExec}/omarchy-hyprland-window-single-square-aspect-toggle"
@@ -74,7 +77,7 @@ let
     "SUPER CTRL ALT, Delete, Toggle laptop display mirroring, exec, ${omarchyExec}/omarchy-hyprland-monitor-internal-mirror toggle"
 
     # Hardware menu (capture/toggle menus already in Menus group above)
-    "SUPER CTRL, H, Hardware menu, exec, ${omarchyExec}/omarchy-menu hardware"
+    "SUPER CTRL, H, Hardware menu, exec, ${menu "hardware"}"
 
     # Control Apple Display brightness
     "CTRL, F1, Apple Display brightness down, exec, ${omarchyExec}/omarchy-brightness-display -5000"
@@ -83,11 +86,11 @@ let
 
     # Captures
     ", PRINT, Screenshot, exec, ${omarchyExec}/omarchy-capture-screenshot"
-    "ALT, PRINT, Screenrecording, exec, ${omarchyExec}/omarchy-menu screenrecord"
+    "ALT, PRINT, Screenrecording, exec, ${menu "screenrecord"}"
     "SUPER, PRINT, Color picker, exec, pkill hyprpicker || hyprpicker -a"
 
     # File sharing
-    "SUPER CTRL, S, Share, exec, ${omarchyExec}/omarchy-menu share"
+    "SUPER CTRL, S, Share, exec, ${menu "share"}"
 
     # Waybar-less information
     "SUPER CTRL ALT, T, Show time, exec, notify-send -u low \"    $(date +\"%A %H:%M  ·  %d %B %Y  ·  Week %V\")\""
@@ -311,7 +314,7 @@ let
     "SUPER, XF86AudioMute, Switch audio output, exec, ${omarchyExec}/omarchy-audio-output-switch"
 
     # Power menu
-    ", XF86PowerOff, Power menu, exec, ${omarchyExec}/omarchy-menu system"
+    ", XF86PowerOff, Power menu, exec, ${menu "system"}"
 
     # Calculator
     ", XF86Calculator, Calculator, exec, gnome-calculator"
