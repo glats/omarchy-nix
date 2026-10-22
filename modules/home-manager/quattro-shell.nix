@@ -52,7 +52,17 @@ in
       }
     ];
 
-    home.packages = [ ttfx ];
+    home.packages = [
+      ttfx
+    ]
+    ++ lib.optional (config.wayland.windowManager.hyprland.configType == "hyprlang") (
+      lib.hiPrio (
+        import ./lib/hyprctl-hyprlang-compat.nix {
+          inherit pkgs;
+          hyprland = config.wayland.windowManager.hyprland.package;
+        }
+      )
+    );
 
     xdg.configFile."omarchy/shell.json".text = builtins.toJSON cfg.shell.settings;
     home.file.".local/state/omarchy/current/theme/shell.toml".source = style;
