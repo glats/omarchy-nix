@@ -1085,6 +1085,7 @@
         "quattro-hyprland": "quattro-hyprland",
         "quattro-nixpkgs": "quattro-nixpkgs",
         "quickshell": "quickshell",
+        "ttfx": "ttfx",
         "walker": "walker"
       }
     },
@@ -1145,6 +1146,27 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default-linux",
+        "type": "github"
+      }
+    },
+    "ttfx": {
+      "inputs": {
+        "nixpkgs": [
+          "quattro-nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790600764,
+        "narHash": "sha256-tLqFKEZAcXocj09l9+2ksvOgFe5465Z3Y37Hr/LrDp8=",
+        "owner": "omacom",
+        "repo": "ttfx",
+        "rev": "921bd551c308c235e01c5867f0199efe0691c271",
+        "type": "github"
+      },
+      "original": {
+        "owner": "omacom",
+        "repo": "ttfx",
+        "rev": "921bd551c308c235e01c5867f0199efe0691c271",
         "type": "github"
       }
     },

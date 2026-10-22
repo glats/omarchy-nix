@@ -33,6 +33,11 @@
       url = "github:omacom/omarchy/f0020448ca87329199de7cb12f2015ebc4a3e5e7";
       flake = false;
     };
+    # Quattro's screensaver renders with ttfx, which nixpkgs does not ship.
+    ttfx = {
+      url = "github:omacom/ttfx/921bd551c308c235e01c5867f0199efe0691c271";
+      inputs.nixpkgs.follows = "quattro-nixpkgs";
+    };
   };
   outputs =
     inputs@{
@@ -48,6 +53,7 @@
       quattro-home-manager,
       quickshell,
       omarchy-quattro,
+      ttfx,
     }:
     let
       quattroSystems = [

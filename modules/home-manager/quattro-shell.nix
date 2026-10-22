@@ -9,6 +9,7 @@ let
   cfg = config.omarchy.quattro;
   system = pkgs.stdenv.hostPlatform.system;
   quickshell = inputs.quickshell.packages.${system}.default;
+  ttfx = inputs.ttfx.packages.${system}.default;
   runtime = inputs.self.packages.${system}.omarchy-runtime;
   runtimePath = "${config.home.homeDirectory}/.local/share/omarchy/quattro";
   legacyBin = "${config.home.homeDirectory}/.local/share/omarchy/bin";
@@ -17,7 +18,7 @@ let
   # Only these panel APIs differ from the retained personal commands.
   panelCommands = pkgs.runCommand "quattro-panel-commands" { } ''
     mkdir -p "$out/bin"
-    for command in omarchy-powerprofiles-set omarchy-powerprofiles-list omarchy-battery-status omarchy-voxtype-status omarchy-theme-bg-set omarchy-theme-bg-next omarchy-system-lock omarchy-hyprland-session-locked omarchy-toggle-idle omarchy-menu-keybindings omarchy-capture-screenshot omarchy-capture-screenrecording; do
+    for command in omarchy-powerprofiles-set omarchy-powerprofiles-list omarchy-battery-status omarchy-voxtype-status omarchy-theme-bg-set omarchy-theme-bg-next omarchy-system-lock omarchy-hyprland-session-locked omarchy-toggle-idle omarchy-menu-keybindings omarchy-capture-screenshot omarchy-capture-screenrecording omarchy-launch-screensaver; do
       ln -s ${runtime}/share/omarchy/bin/$command "$out/bin/$command"
     done
   '';
@@ -31,6 +32,7 @@ let
         pkgs.wtype
         pkgs.vips
         pkgs.v4l-utils
+        pkgs.socat
       ]
     }:${lib.escapeShellArg legacyBin}:${lib.escapeShellArg "${runtime}/share/omarchy/bin"}:$PATH
     export OMARCHY_SCREENSHOT_EDITOR=${screenshotEditor}
@@ -49,6 +51,8 @@ in
         message = "omarchy.quattro.shell.settings.version must be 1; otherwise upstream ignores the plugin policy";
       }
     ];
+
+    home.packages = [ ttfx ];
 
     xdg.configFile."omarchy/shell.json".text = builtins.toJSON cfg.shell.settings;
     home.file.".local/state/omarchy/current/theme/shell.toml".source = style;
