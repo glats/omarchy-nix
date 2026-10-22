@@ -107,7 +107,7 @@ let
     "SUPER CTRL ALT, Z, Reset zoom, exec, hyprctl keyword cursor:zoom_factor 1"
 
     # Lock system
-    "SUPER CTRL, L, Lock system, exec, ${omarchyExec}/omarchy-system-lock"
+    "SUPER CTRL, L, Lock system, exec, ${pick "${omarchyExec}/omarchy-system-lock" "omarchy-system-lock"}"
 
     # Close windows
     "SUPER, W, Close window, killactive,"

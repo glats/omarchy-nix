@@ -17,7 +17,7 @@ let
   # Only these panel APIs differ from the retained personal commands.
   panelCommands = pkgs.runCommand "quattro-panel-commands" { } ''
     mkdir -p "$out/bin"
-    for command in omarchy-powerprofiles-set omarchy-powerprofiles-list omarchy-battery-status omarchy-voxtype-status omarchy-theme-bg-set omarchy-theme-bg-next; do
+    for command in omarchy-powerprofiles-set omarchy-powerprofiles-list omarchy-battery-status omarchy-voxtype-status omarchy-theme-bg-set omarchy-theme-bg-next omarchy-system-lock omarchy-hyprland-session-locked; do
       ln -s ${runtime}/share/omarchy/bin/$command "$out/bin/$command"
     done
   '';

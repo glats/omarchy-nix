@@ -1,11 +1,28 @@
-{ pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+let
+  quattroShell = config.omarchy.quattro.shell.enable or false;
+  quattroBin = "${config.home.homeDirectory}/.local/share/omarchy/quattro/bin";
+  lock =
+    if quattroShell then "env PATH=${quattroBin}:$PATH omarchy-system-lock" else "omarchy-system-lock";
+  lockOnly = if quattroShell then lock else "OMARCHY_LOCK_ONLY=true omarchy-system-lock";
+  isLocked =
+    if quattroShell then
+      "env PATH=${quattroBin}:$PATH omarchy-hyprland-session-locked"
+    else
+      "pidof hyprlock";
+in
 {
   services.hypridle = {
     enable = true;
     settings = {
       general = {
-        lock_cmd = "omarchy-system-lock";
-        before_sleep_cmd = "OMARCHY_LOCK_ONLY=true omarchy-system-lock";
+        lock_cmd = lock;
+        before_sleep_cmd = lockOnly;
         after_sleep_cmd = "hyprctl dispatch dpms on";
         ignore_dbus_inhibit = false;
         inhibit_sleep = 3;
@@ -13,11 +30,11 @@
       listener = [
         {
           timeout = 150;
-          on-timeout = "omarchy-toggle-enabled idle-off || pidof hyprlock || omarchy-launch-screensaver";
+          on-timeout = "omarchy-toggle-enabled idle-off || ${isLocked} || omarchy-launch-screensaver";
         }
         {
           timeout = 151;
-          on-timeout = "omarchy-toggle-enabled idle-off || omarchy-system-lock";
+          on-timeout = "omarchy-toggle-enabled idle-off || ${lock}";
           on-resume = "omarchy-system-wake";
         }
         {
