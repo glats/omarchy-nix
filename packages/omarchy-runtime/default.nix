@@ -40,6 +40,11 @@ stdenvNoCC.mkDerivation {
       "$out/share/omarchy/shell/plugins/bar/indicators/ScreenRecording.qml" \
       --replace-fail '^gpu-screen-recorder' '(^|/)gpu-screen-recorder( |$)'
 
+    # The systemd user manager PATH lacks the runtime bin, so reminder units
+    # inherit the caller's PATH to find the notification helpers.
+    substituteInPlace "$out/share/omarchy/bin/omarchy-reminder" \
+      --replace-fail 'systemd-run --user --quiet --collect --on-active' 'systemd-run --user --quiet --collect --setenv=PATH="$PATH" --on-active'
+
     # Upstream intentionally relies on Arch's ambient PATH. Keep the source
     # scripts unchanged, but make the shell entrypoint, IPC client, and restart
     # helper resolve their Nix-provided executables deterministically. The
