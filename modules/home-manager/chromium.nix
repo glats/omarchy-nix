@@ -1,7 +1,28 @@
-{ config
-, pkgs
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  ...
 }:
+let
+  defaultPreferences = pkgs.writeText "chromium-preferences.json" (
+    builtins.toJSON {
+      extensions = {
+        theme = {
+          id = "";
+          use_system = false;
+          use_custom = false;
+        };
+      };
+      browser = {
+        theme = {
+          color_scheme = 2; # Dark mode
+          user_color = 2;
+        };
+      };
+    }
+  );
+in
 {
   # Chromium browser configuration
   # Flags are applied via XDG config file for Chromium/Chrome/Brave compatibility
@@ -21,20 +42,12 @@
     --disable-features=WaylandWpColorManagerV1
   '';
 
-  # Chromium preferences for dark mode
-  xdg.configFile."chromium/Default/Preferences".text = builtins.toJSON {
-    extensions = {
-      theme = {
-        id = "";
-        use_system = false;
-        use_custom = false;
-      };
-    };
-    browser = {
-      theme = {
-        color_scheme = 2; # Dark mode
-        user_color = 2;
-      };
-    };
-  };
+  # Chromium owns and rewrites its Preferences file, so only seed dark mode
+  # for a fresh profile instead of managing the whole file.
+  home.activation.seedChromiumPreferences = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    preferences="${config.xdg.configHome}/chromium/Default/Preferences"
+    if [[ ! -e "$preferences" ]]; then
+      run install -Dm644 ${defaultPreferences} "$preferences"
+    fi
+  '';
 }
