@@ -17,10 +17,11 @@ let
   # Only these panel APIs differ from the retained personal commands.
   panelCommands = pkgs.runCommand "quattro-panel-commands" { } ''
     mkdir -p "$out/bin"
-    for command in omarchy-powerprofiles-set omarchy-powerprofiles-list omarchy-battery-status omarchy-voxtype-status omarchy-theme-bg-set omarchy-theme-bg-next omarchy-system-lock omarchy-hyprland-session-locked omarchy-toggle-idle omarchy-menu-keybindings; do
+    for command in omarchy-powerprofiles-set omarchy-powerprofiles-list omarchy-battery-status omarchy-voxtype-status omarchy-theme-bg-set omarchy-theme-bg-next omarchy-system-lock omarchy-hyprland-session-locked omarchy-toggle-idle omarchy-menu-keybindings omarchy-capture-screenshot omarchy-capture-screenrecording; do
       ln -s ${runtime}/share/omarchy/bin/$command "$out/bin/$command"
     done
   '';
+  screenshotEditor = import ./lib/screenshot-editor.nix { inherit pkgs; };
   launchShell = pkgs.writeShellScript "omarchy-quickshell" ''
     export PATH=${
       lib.makeBinPath [
@@ -29,8 +30,10 @@ let
         pkgs.libxkbcommon
         pkgs.wtype
         pkgs.vips
+        pkgs.v4l-utils
       ]
     }:${lib.escapeShellArg legacyBin}:${lib.escapeShellArg "${runtime}/share/omarchy/bin"}:$PATH
+    export OMARCHY_SCREENSHOT_EDITOR=${screenshotEditor}
     exec ${quickshell}/bin/quickshell -n -p ${lib.escapeShellArg "${runtimePath}/shell"}
   '';
 in

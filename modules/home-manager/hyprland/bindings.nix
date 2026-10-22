@@ -19,6 +19,7 @@ let
   menu =
     route:
     pick "${omarchyExec}/omarchy-menu${lib.optionalString (route != "root") " ${route}"}" "omarchy-shell shell toggle omarchy.menu '{\"menu\":\"${route}\"}'";
+  screenshotEditor = import ../lib/screenshot-editor.nix { inherit pkgs; };
   toggleTopBar =
     if cfg.quattro.shell.enable or false then
       "${homeDir}/.local/share/omarchy/quattro/bin/omarchy-toggle bar-off"
@@ -85,7 +86,7 @@ let
     "SHIFT CTRL, F2, Apple Display full brightness, exec, ${omarchyExec}/omarchy-brightness-display +60000"
 
     # Captures
-    ", PRINT, Screenshot, exec, ${omarchyExec}/omarchy-capture-screenshot"
+    ", PRINT, Screenshot, exec, ${pick "${omarchyExec}/omarchy-capture-screenshot" "OMARCHY_SCREENSHOT_EDITOR=${screenshotEditor} omarchy-capture-screenshot"}"
     "ALT, PRINT, Screenrecording, exec, ${menu "screenrecord"}"
     "SUPER, PRINT, Color picker, exec, pkill hyprpicker || hyprpicker -a"
 

@@ -30,6 +30,16 @@ stdenvNoCC.mkDerivation {
     substituteInPlace "$out/share/omarchy/shell/services/PluginRegistry.qml" \
       --replace-fail 'find \"$dir\" -mindepth 2' 'find -L \"$dir\" -mindepth 2'
 
+    # Nix wraps gpu-screen-recorder, so its command line starts with a store
+    # path and never matches upstream's anchored "^gpu-screen-recorder".
+    chmod u+w "$out/share/omarchy/default/omarchy" "$out/share/omarchy/default/omarchy/omarchy-menu.jsonc" \
+      "$out/share/omarchy/shell/plugins/bar/indicators" "$out/share/omarchy/shell/plugins/bar/indicators/ScreenRecording.qml"
+    substituteInPlace \
+      "$out/share/omarchy/bin/omarchy-capture-screenrecording" \
+      "$out/share/omarchy/default/omarchy/omarchy-menu.jsonc" \
+      "$out/share/omarchy/shell/plugins/bar/indicators/ScreenRecording.qml" \
+      --replace-fail '^gpu-screen-recorder' '(^|/)gpu-screen-recorder( |$)'
+
     # Upstream intentionally relies on Arch's ambient PATH. Keep the source
     # scripts unchanged, but make the shell entrypoint, IPC client, and restart
     # helper resolve their Nix-provided executables deterministically. The
