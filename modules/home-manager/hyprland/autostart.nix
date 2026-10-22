@@ -9,7 +9,11 @@
     exec-once = [
       # "hypridle & mako & waybar & fcitx5"
       # "waybar"
-      "uwsm-app -- swaybg -i ~/.config/omarchy/current/background -m fill"
+    ]
+    ++ lib.optional (
+      !config.omarchy.quattro.shell.enable
+    ) "uwsm-app -- swaybg -i ~/.config/omarchy/current/background -m fill"
+    ++ [
       "systemctl --user start hyprpolkitagent"
     ]
     ++ lib.optionals config.omarchy.quattro.shell.enable [ "wl-clip-persist --clipboard regular" ]

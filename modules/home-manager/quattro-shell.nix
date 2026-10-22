@@ -17,7 +17,7 @@ let
   # Only these panel APIs differ from the retained personal commands.
   panelCommands = pkgs.runCommand "quattro-panel-commands" { } ''
     mkdir -p "$out/bin"
-    for command in omarchy-powerprofiles-set omarchy-powerprofiles-list omarchy-battery-status omarchy-voxtype-status; do
+    for command in omarchy-powerprofiles-set omarchy-powerprofiles-list omarchy-battery-status omarchy-voxtype-status omarchy-theme-bg-set omarchy-theme-bg-next; do
       ln -s ${runtime}/share/omarchy/bin/$command "$out/bin/$command"
     done
   '';
@@ -28,6 +28,7 @@ let
         pkgs.pulseaudio
         pkgs.libxkbcommon
         pkgs.wtype
+        pkgs.vips
       ]
     }:${lib.escapeShellArg legacyBin}:${lib.escapeShellArg "${runtime}/share/omarchy/bin"}:$PATH
     exec ${quickshell}/bin/quickshell -n -p ${lib.escapeShellArg "${runtimePath}/shell"}
@@ -54,6 +55,25 @@ in
       accent = "#${config.colorScheme.palette.base0D}"
       muted = "#${config.colorScheme.palette.base03}"
       red = "#${config.colorScheme.palette.base08}"
+    '';
+
+    # The shell background reads the state link while hyprlock reads the
+    # config link, so adopt the current background once and keep the config
+    # link pointing at the state link.
+    home.activation.seedQuattroBackground = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      state="${config.home.homeDirectory}/.local/state/omarchy/current"
+      legacy="${config.xdg.configHome}/omarchy/current"
+      run mkdir -p "$state"
+      if [[ ! -e "$state/background" && -e "$legacy/background" ]]; then
+        run ln -nsf "$(readlink -f "$legacy/background")" "$state/background"
+      fi
+      if [[ ! -e "$state/theme.name" && -f "$legacy/theme.name" ]]; then
+        run cp "$legacy/theme.name" "$state/theme.name"
+      fi
+      if [[ -e "$state/background" && "$(readlink "$legacy/background")" != "$state/background" ]]; then
+        run mkdir -p "$legacy"
+        run ln -nsf "$state/background" "$legacy/background"
+      fi
     '';
 
     systemd.user.services.omarchy-shell = {
