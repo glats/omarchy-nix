@@ -54,6 +54,7 @@ in
 
     home.packages = [
       ttfx
+      pkgs.foot
     ]
     ++ lib.optional (config.wayland.windowManager.hyprland.configType == "hyprlang") (
       lib.hiPrio (
