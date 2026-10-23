@@ -46,9 +46,11 @@ stdenvNoCC.mkDerivation {
       --replace-fail 'systemd-run --user --quiet --collect --on-active' 'systemd-run --user --quiet --collect --setenv=PATH="$PATH" --on-active'
 
     # Hyprland launches the screensaver terminal with the legacy bin first on
-    # PATH, so run the runtime's screensaver script by absolute path.
+    # PATH, so run the runtime's screensaver script by absolute path. hyprctl
+    # joins its arguments, so the classic exec fallback must pass one string.
     substituteInPlace "$out/share/omarchy/bin/omarchy-launch-screensaver" \
-      --replace-fail '-e omarchy-screensaver' '-e "$OMARCHY_PATH/bin/omarchy-screensaver"'
+      --replace-fail '-e omarchy-screensaver' '-e "$OMARCHY_PATH/bin/omarchy-screensaver"' \
+      --replace-fail 'hyprctl dispatch exec -- bash -lc "$command"' 'hyprctl dispatch exec "$command"'
 
     # Upstream intentionally relies on Arch's ambient PATH. Keep the source
     # scripts unchanged, but make the shell entrypoint, IPC client, and restart
